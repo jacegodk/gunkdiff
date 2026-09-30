@@ -10,15 +10,15 @@
     "terminal",
     "tui"
   ],
-  "homepage": "https://github.com/jacegodk/junkdiff#readme",
+  "homepage": "https://github.com/jacegodk/gunkdiff#readme",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jacegodk/junkdiff.git"
+    "url": "git+https://github.com/jacegodk/gunkdiff.git"
   },
   "bin": {
-    "junk": "./bin/hunk.cjs",
-    "junkdiff": "./bin/hunk.cjs"
+    "gunk": "./bin/hunk.cjs",
+    "gunkdiff": "./bin/hunk.cjs"
   },
   "files": [
     "bin",

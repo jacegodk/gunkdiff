@@ -128,7 +128,7 @@ function rebuildHitsIfActive(): void {
 let promptResolve: ((value: string | null) => void) | null = null;
 
 /**
- * junk: read the source of every file a search will scan, once per file.
+ * gunk: read the source of every file a search will scan, once per file.
  *
  * A patch carries only what changed, so searching it misses the unchanged code an expansion
  * shows. Reading the file's own text makes the search answer for the whole file. A file with no
@@ -176,7 +176,7 @@ function applyClear(ctx: ExtensionCommandContext): void {
 }
 
 /**
- * junk: bring one hit on screen, opening the file first when only its source carries that line.
+ * gunk: bring one hit on screen, opening the file first when only its source carries that line.
  *
  * Search answers for the whole file, so a pick can land in unchanged code the diff is still
  * hiding; showing the file whole is what makes that line exist on screen.
@@ -429,7 +429,7 @@ export default function (hunk: HunkExtensionAPI) {
     autoSelect: true,
     // `matches` gates which files can select this view, but hunk can still ask `layout` to
     // re-derive a stale presentation (e.g. after a refresh cleared the mark); decline it there too.
-    // The fold binds each readable side's lines so a note keeps the file folded; junk verifies
+    // The fold binds each readable side's lines so a note keeps the file folded; gunk verifies
     // bindings against the source, so a side that cannot be read is left unbound.
     async layout(input) {
       if (!isViewed(getViewedState(), input.file)) return null;
@@ -626,7 +626,7 @@ export default function (hunk: HunkExtensionAPI) {
       const current = currentHit();
       const marksPerLine = new Map<string, number>();
       const marks: ExtensionLineHighlight[] = [];
-      // junk: the same source-first scan the hit list uses, so a match in revealed context is
+      // gunk: the same source-first scan the hit list uses, so a match in revealed context is
       // marked too. A mark on a line the file is not showing paints nothing and costs nothing.
       for (const hit of scanFileHits(file, query)) {
         if (marks.length >= MAX_MARKS_PER_FILE) break;

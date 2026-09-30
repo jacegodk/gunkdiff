@@ -229,7 +229,7 @@ describe("PTY file views", () => {
       args: ["diff", "--mode", "unified", "--files", pair.before, pair.after],
       cwd: pair.directory,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -259,7 +259,7 @@ describe("PTY file views", () => {
       args: ["diff", "--extension", syntaxFixture.extension, "--mode", "unified"],
       cwd: repo.dir,
       cols: 120,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -346,7 +346,7 @@ describe("PTY file views", () => {
       // Assert both hunk-navigation directions immediately from the exact current-file marker.
       await harness.ensureKeyboardIsLive(session);
       session.resize({ cols: 160, rows: 20 });
-      // junk: the bundled files pane keeps a viewed-mark column between the selection
+      // gunk: the bundled files pane keeps a viewed-mark column between the selection
       // stripe and the status glyph, so the marker is not flush against the name.
       await session.waitForText(/▌\s+M beta\.ts/, { timeout: 5_000 });
       await session.press("[");
@@ -387,7 +387,7 @@ describe("PTY file views", () => {
       ],
       cwd: pair.directory,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -467,7 +467,7 @@ describe("PTY file views", () => {
         ],
         cwd: JSX_FILE_VIEW_GALLERY,
         cols: 140,
-        // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+        // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
         // hides the file-presentation entries these tests click.
         rows: 32,
       });
@@ -497,7 +497,7 @@ describe("PTY file views", () => {
     const session = await harness.launchShellCommand({
       command: `${JSON.stringify(process.execPath)} run ${JSON.stringify(JSX_MIXED_REVIEW_LAUNCHER)}`,
       cols: 220,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -571,7 +571,7 @@ describe("PTY file views", () => {
       ],
       cwd: pair.dir,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -631,7 +631,7 @@ describe("PTY file views", () => {
       ],
       cwd: pair.dir,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -684,7 +684,7 @@ describe("PTY file views", () => {
       args: ["diff", "--extension", INLINE_EDIT_EXTENSION, "--mode", "unified"],
       cwd: repo.dir,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -788,7 +788,7 @@ describe("PTY file views", () => {
       ],
       cwd: repo.dir,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -832,7 +832,7 @@ describe("PTY file views", () => {
       args: ["diff", "--extension", INLINE_EDIT_EXTENSION, "--mode", "unified"],
       cwd: repo.dir,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -874,7 +874,7 @@ describe("PTY file views", () => {
       ],
       cwd: pair.directory,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });
@@ -915,7 +915,7 @@ describe("PTY file views", () => {
       ],
       cwd: pair.directory,
       cols: 140,
-      // junk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
+      // gunk: the View menu carries one more notes toggle than hunk's, so a 24-row terminal
       // hides the file-presentation entries these tests click.
       rows: 32,
     });

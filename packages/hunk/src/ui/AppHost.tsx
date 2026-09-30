@@ -302,7 +302,7 @@ export function AppHost({
             discoveryCatalog,
             // Reuse the session hub so the mounted toast surface keeps receiving notifications.
             notifications: currentExtensions?.notifications,
-            // junk: keep the built-in set the running load has; a host that loaded none stays so.
+            // gunk: keep the built-in set the running load has; a host that loaded none stays so.
             builtInExtensions: builtInExtensionsOf(currentExtensions),
             onProvisionalLoad: (result) => activeExtensionSession.trackPrepared(result),
             assertActive: () => {

@@ -360,7 +360,7 @@ export interface ExtensionFileViewSpan {
    */
   readonly syntax?: ExtensionFileViewSyntaxReference;
   /**
-   * junk: paint this span alone on the raw diff's added or removed background, under any syntax
+   * gunk: paint this span alone on the raw diff's added or removed background, under any syntax
    * colors, so one side of a split row can read as a change while the other stays context.
    */
   readonly background?: "added" | "removed";
@@ -499,7 +499,7 @@ export interface ExtensionFileView {
     input: ExtensionFileViewInput,
   ): ExtensionFileViewLayout | null | Promise<ExtensionFileViewLayout | null>;
   /**
-   * junk: select this view on load and reload for every file it `matches` that has no stored
+   * gunk: select this view on load and reload for every file it `matches` that has no stored
    * presentation yet, so a presentation that follows persisted state (a folded viewed file)
    * shows without a command. The first registered auto-select view that matches wins.
    */

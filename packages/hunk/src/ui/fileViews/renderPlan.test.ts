@@ -85,7 +85,7 @@ describe("file-view render plan", () => {
     expect((plan.rows[0] as { stableAliasKeys?: unknown }).stableAliasKeys).toBeUndefined();
   });
 
-  test("junk: a whole-file fold hosts a note whose line no hunk contains any more", () => {
+  test("gunk: a whole-file fold hosts a note whose line no hunk contains any more", () => {
     const folded: ExtensionFileViewLayout = {
       rows: [
         {

@@ -3,7 +3,7 @@ import type { ReviewStoredNote } from "./state";
 import type { ReviewDocumentV1, ReviewNoteV1, ReviewSide } from "./types";
 
 /**
- * Saved user notes: hunk keeps a reviewer's inline notes only in the running session. junk
+ * Saved user notes: hunk keeps a reviewer's inline notes only in the running session. gunk
  * mirrors them to disk per worktree and branch and restores them when that pair is opened again.
  *
  * On disk a note is addressed by file path and line, never by `fileKey`, because the key folds in

@@ -20,7 +20,7 @@ const NAME_PADDING = 1;
 /**
  * Render one file header as the band that starts the file.
  *
- * junk: the name sits in the middle of the band rather than at the left edge, so the break
+ * gunk: the name sits in the middle of the band rather than at the left edge, so the break
  * between two files is one bright bar carrying the file it introduces. Stats stay at the right,
  * where every file lines them up.
  */

@@ -100,7 +100,7 @@ describe("built-in command chords", () => {
     expect(press({ name: "b", sequence: "b" })).toBe("hunk.review.pageUp");
     // Shift-Space pages backward, and plain space must not.
     expect(press({ name: "space", shift: true })).toBe("hunk.review.pageUp");
-    // junk: the arrows step every line; j/k step only within the current hunk.
+    // gunk: the arrows step every line; j/k step only within the current hunk.
     expect(press({ name: "down" })).toBe("hunk.review.stepDown");
     expect(press({ name: "j", sequence: "j" })).toBe("hunk.review.stepDownInHunk");
     expect(press({ name: "up" })).toBe("hunk.review.stepUp");

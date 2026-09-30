@@ -796,7 +796,7 @@ export function buildSplitRows(
     }
   }
 
-  // junk: an ordinary Git patch names no file length, so the gap after the last hunk exists
+  // gunk: an ordinary Git patch names no file length, so the gap after the last hunk exists
   // only once the file's source has been read.
   const trailingGap = reviewTrailingGap(
     sourceTotalLines === undefined
@@ -917,7 +917,7 @@ export function buildUnifiedRows(
     }
   }
 
-  // junk: an ordinary Git patch names no file length, so the gap after the last hunk exists
+  // gunk: an ordinary Git patch names no file length, so the gap after the last hunk exists
   // only once the file's source has been read.
   const trailingGap = reviewTrailingGap(
     sourceTotalLines === undefined

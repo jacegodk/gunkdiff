@@ -639,7 +639,7 @@ describe("file-view layout validation", () => {
     }
   });
 
-  test("junk: a span background is kept when it names a change tint and rejected otherwise", () => {
+  test("gunk: a span background is kept when it names a change tint and rejected otherwise", () => {
     const tinted = validateFileViewLayout(
       {
         rows: [

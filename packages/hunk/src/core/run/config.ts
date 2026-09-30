@@ -466,7 +466,7 @@ export const CONFIG_REFERENCE_OPTIONS: readonly ConfigReferenceOption[] = [
     accepted: "`true` or `false`",
     runtimeDefault: false,
     description:
-      "junk: delete saved review notes flagged `handled` in their notes file when the worktree and branch are opened, instead of restoring them.",
+      "gunk: delete saved review notes flagged `handled` in their notes file when the worktree and branch are opened, instead of restoring them.",
   },
   {
     key: "sidebar",

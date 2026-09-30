@@ -97,7 +97,7 @@ export interface ReviewIntentFacts {
    */
   annotations?: ReviewAnnotationIndex;
   /**
-   * junk: files the caller's presentation has collapsed to one row. Only the caller knows how
+   * gunk: files the caller's presentation has collapsed to one row. Only the caller knows how
    * each file is currently drawn, so hunk navigation is told rather than guessing.
    */
   collapsedFileKeys?: ReadonlySet<string>;
@@ -123,7 +123,7 @@ export type ReviewIntent =
   | { type: "filter/set"; filter: string }
   /** Set whether agent notes are shown; reviewer-authored notes stay visible either way. */
   | { type: "notes/set-visibility"; visible: boolean }
-  /** junk: set or clear the `handled` tag on one stored note, user or live. */
+  /** gunk: set or clear the `handled` tag on one stored note, user or live. */
   | { type: "notes/set-handled"; noteId: string; handled: boolean }
   /** Open a draft at one hunk, defaulting to the line a whole-hunk note hangs from. */
   | {
@@ -152,13 +152,13 @@ export type ReviewIntent =
   | { type: "notes/clear"; fileKey?: string; includeUser?: boolean }
   /** Flip one addressable collapsed gap between collapsed and expanded. */
   | { type: "expansion/toggle"; fileKey: string; gapId: string }
-  /** junk: show `delta` more (or, negative, fewer) unchanged lines on both sides of one hunk. */
+  /** gunk: show `delta` more (or, negative, fewer) unchanged lines on both sides of one hunk. */
   | { type: "expansion/reveal-around"; fileKey: string; hunkIndex: number; delta: number }
-  /** junk: open or close every gap of one file, so it reads as the whole file or as a diff. */
+  /** gunk: open or close every gap of one file, so it reads as the whole file or as a diff. */
   | { type: "expansion/set-file"; fileKey: string; expanded: boolean }
-  /** junk: the same across every file the review is showing. */
+  /** gunk: the same across every file the review is showing. */
   | { type: "expansion/set-all"; expanded: boolean }
-  /** junk: show `delta` more (or fewer) of one gap's lines, from its start or its end. */
+  /** gunk: show `delta` more (or fewer) of one gap's lines, from its start or its end. */
   | {
       type: "expansion/reveal-gap";
       fileKey: string;
@@ -268,7 +268,7 @@ export interface ReviewExpansionToggledOutcome {
   sourceIdentity?: string;
 }
 
-/** junk: what a reveal-around settled on: the gaps it touched and whether any shows lines now. */
+/** gunk: what a reveal-around settled on: the gaps it touched and whether any shows lines now. */
 export interface ReviewExpansionRevealedOutcome {
   type: "expansion/revealed";
   fileKey: string;
@@ -278,7 +278,7 @@ export interface ReviewExpansionRevealedOutcome {
   anyOpen: boolean;
 }
 
-/** junk: what an open-or-close of whole files settled on, and whose source must be read. */
+/** gunk: what an open-or-close of whole files settled on, and whose source must be read. */
 export interface ReviewExpansionFilesOutcome {
   type: "expansion/files-set";
   expanded: boolean;
@@ -661,7 +661,7 @@ function planDraftReplyStart(
 }
 
 /**
- * junk: grow or shrink what one gap shows from one of its ends.
+ * gunk: grow or shrink what one gap shows from one of its ends.
  *
  * A gap whose revealed lines cover it becomes fully expanded, and one shrunk to nothing
  * collapses. Shrinking an already expanded gap treats it as revealed entirely from that end,
@@ -697,7 +697,7 @@ function planOneGapReveal(
 }
 
 /**
- * junk: open or close every gap of the named files.
+ * gunk: open or close every gap of the named files.
  *
  * Opening one is what "show me the whole file" means: each collapsed gap is expanded, and a
  * partial patch also gets the gap after its last hunk, which only exists once the file's source
@@ -756,7 +756,7 @@ function planExpansionSetFiles(
   return { actions, outcome: { type: "expansion/files-set", expanded, sources } };
 }
 
-/** junk: grow or shrink one named gap from one end, for the arrows a gap row draws. */
+/** gunk: grow or shrink one named gap from one end, for the arrows a gap row draws. */
 function planExpansionRevealGap(
   state: ReviewState,
   intent: Extract<ReviewIntent, { type: "expansion/reveal-gap" }>,
@@ -786,7 +786,7 @@ function planExpansionRevealGap(
 }
 
 /**
- * junk: plan showing `delta` more unchanged lines on each side of one hunk.
+ * gunk: plan showing `delta` more unchanged lines on each side of one hunk.
  *
  * The gap before the hunk grows from its end (`tail`), the gap after it from its start
  * (`head`), so the revealed lines sit next to the change. A gap whose reveal covers it all

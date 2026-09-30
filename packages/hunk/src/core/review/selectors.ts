@@ -623,7 +623,7 @@ export function selectReviewGapForSelection(
 }
 
 /**
- * junk: the expansion side's line count for one file, once its source has been read.
+ * gunk: the expansion side's line count for one file, once its source has been read.
  *
  * The trailing gap of an ordinary Git diff exists only when this is known, so every surface
  * that asks about gaps derives it the same way: from the source the review already loaded.
@@ -636,7 +636,7 @@ export function selectReviewSourceTotalLines(
   return status?.kind === "loaded" ? normalizedReviewSourceLines(status.text).length : undefined;
 }
 
-/** junk: whether one file is showing any unchanged context a gap was hiding. */
+/** gunk: whether one file is showing any unchanged context a gap was hiding. */
 export function selectReviewFileHasOpenGap(
   state: Pick<ReviewState, "expandedGaps">,
   fileKey: string,
@@ -646,12 +646,12 @@ export function selectReviewFileHasOpenGap(
   );
 }
 
-/** junk: whether any file in the review is showing unchanged context. */
+/** gunk: whether any file in the review is showing unchanged context. */
 export function selectReviewHasOpenGap(state: Pick<ReviewState, "expandedGaps">): boolean {
   return state.expandedGaps.some((gap) => gap.expanded || gap.reveal !== undefined);
 }
 
-/** junk: select the partly revealed gaps of every file, keyed by gap id. */
+/** gunk: select the partly revealed gaps of every file, keyed by gap id. */
 export function selectRevealedGapsByFileKey(
   state: Pick<ReviewState, "expandedGaps">,
 ): Record<string, ReadonlyMap<string, ReviewGapReveal>> {

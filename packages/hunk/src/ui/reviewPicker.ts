@@ -11,7 +11,7 @@ export interface ReviewPickerItem {
   base?: string | null;
 }
 
-/** The picker applies to a working-tree review with no explicit target: `junk diff` and nothing else. */
+/** The picker applies to a working-tree review with no explicit target: `gunk diff` and nothing else. */
 export function reviewPickerApplies(input: CliInput): input is VcsDiffCommandInput {
   return input.kind === "vcs" && !input.staged && !hasExplicitDiffTarget(input);
 }

@@ -167,7 +167,7 @@ describe("selection", () => {
 });
 
 describe("document reconciliation", () => {
-  test("junk: hiding my notes drops focus from an active user note and nothing else", () => {
+  test("gunk: hiding my notes drops focus from an active user note and nothing else", () => {
     const base = {
       ...createTestReviewState(["alpha"], { showAgentNotes: true }),
       activeNoteId: "user-1",
@@ -192,7 +192,7 @@ describe("document reconciliation", () => {
     ).toBe(true);
   });
 
-  test("junk: a reveal records the shown part of a gap, and a zero reveal collapses it", () => {
+  test("gunk: a reveal records the shown part of a gap, and a zero reveal collapses it", () => {
     const base = createTestReviewState();
     const revealed = reduceReviewState(base, {
       type: "expansion/reveal",

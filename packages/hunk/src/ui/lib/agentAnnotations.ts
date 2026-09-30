@@ -39,7 +39,7 @@ export interface VisibleAgentNote {
     onEdit?: () => void;
     onReply?: () => void;
     onDelete?: () => void;
-    /** junk: set or clear the note's `handled` tag. */
+    /** gunk: set or clear the note's `handled` tag. */
     onToggleHandled?: () => void;
   };
   draft?: {

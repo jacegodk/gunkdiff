@@ -35,7 +35,7 @@ export interface ReviewGapSource {
   deletionLines: readonly string[];
   isPartial: boolean;
   /**
-   * junk: the expansion side's full line count, once that source has been read. A partial
+   * gunk: the expansion side's full line count, once that source has been read. A partial
    * patch — every ordinary Git diff — carries no file length, so without this there is no
    * trailing gap and nothing below the last hunk can be revealed.
    */
@@ -52,7 +52,7 @@ export interface ReviewGapAddress {
 }
 
 /**
- * junk: how much of a collapsed gap is revealed without opening it fully. `head` lines are
+ * gunk: how much of a collapsed gap is revealed without opening it fully. `head` lines are
  * shown from the gap's start (next to the hunk above, or the file start), `tail` lines from
  * its end (next to the hunk below, or the file end); the rest stays a collapsed row between.
  */
@@ -88,7 +88,7 @@ export function parseReviewGapId(gapId: string) {
 /**
  * Adapt one projected semantic file onto the geometry gap addressing reads.
  *
- * junk: `totalLines` is the expansion side's length from the file's loaded source, which is
+ * gunk: `totalLines` is the expansion side's length from the file's loaded source, which is
  * what gives a partial patch a trailing gap. Callers that have not read the source pass
  * nothing and see the same geometry as before.
  */
@@ -152,7 +152,7 @@ export function reviewLeadingGap(
  * the hunk. Every consumer agrees on hiding it — correcting the count changes what the
  * terminal renders and is staged as its own change.
  *
- * junk: a partial patch has a trailing gap once `totalLines` names the expansion side's
+ * gunk: a partial patch has a trailing gap once `totalLines` names the expansion side's
  * length. Everything after the last hunk is unchanged context, so both sides run equally
  * long and the old side's length follows from the new side's.
  */

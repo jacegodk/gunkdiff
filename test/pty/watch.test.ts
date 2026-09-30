@@ -51,7 +51,7 @@ describe("PTY watch mode", () => {
     });
 
     try {
-      // junk: the fixture has two worktrees, so the review picker opens over the diff on
+      // gunk: the fixture has two worktrees, so the review picker opens over the diff on
       // startup. Esc keeps the launch worktree, which is the one this test watches.
       await session.waitForText(/Pick a worktree/, { timeout: 15_000 });
       await session.press("escape");

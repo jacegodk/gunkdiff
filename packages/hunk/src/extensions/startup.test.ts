@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionsConfig } from "../core/run/config";
-import { JUNK_BUILT_IN_EXTENSIONS } from "./default/builtIn";
+import { GUNK_BUILT_IN_EXTENSIONS } from "./default/builtIn";
 import {
   createExtensionLoadNotices,
   createSupersededExtensionNotices,
@@ -134,7 +134,7 @@ export default function (hunk) {
     expect(final.loaded.map((extension) => extension.id)).toEqual(["global", "local"]);
   });
 
-  test("junk's built-in extensions load first under their own ids, and an installed copy is skipped silently", async () => {
+  test("gunk's built-in extensions load first under their own ids, and an installed copy is skipped silently", async () => {
     const home = createTempDir("hunk-startup-builtin-");
     writeGlobalExtension(
       home,
@@ -161,7 +161,7 @@ export default function (hunk) {
       builtInExtensions: [
         {
           id: "viewed",
-          sourcePath: "junk:bundled/viewed",
+          sourcePath: "gunk:bundled/viewed",
           factory: (hunk) => hunk.registerTheme({ id: "built-in" }),
         },
       ],
@@ -176,14 +176,14 @@ export default function (hunk) {
     expect(result.issues).toEqual([]);
   });
 
-  test("junk's built-in list carries hunk-viewed, and it loads with no extension on disk", async () => {
+  test("gunk's built-in list carries hunk-viewed, and it loads with no extension on disk", async () => {
     const home = createTempDir("hunk-startup-default-builtin-");
     const result = await loadStartupExtensions({
       extensions: createExtensionsConfig(),
       cwd: home,
       env: { XDG_CONFIG_HOME: home } as NodeJS.ProcessEnv,
       hostOverrides: { repoRoot: undefined },
-      builtInExtensions: JUNK_BUILT_IN_EXTENSIONS,
+      builtInExtensions: GUNK_BUILT_IN_EXTENSIONS,
     });
     expect(result.issues).toEqual([]);
     expect(result.loaded.map((entry) => entry.id)).toEqual(["hunk-viewed"]);

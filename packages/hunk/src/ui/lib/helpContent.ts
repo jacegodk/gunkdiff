@@ -182,7 +182,7 @@ function helpEntryKeys(commands: readonly AppCommand[], spec: HelpEntrySpec): st
 
   const labels = spec.commandIds.flatMap((id) => {
     const command = commands.find((candidate) => candidate.id === id);
-    // junk: a key reference lists what the keyboard does, not what is available this second.
+    // gunk: a key reference lists what the keyboard does, not what is available this second.
     // Note actions, copy and the like are bound whether or not the moment enables them.
     if (!command || command.keyLabels.length === 0) {
       return [];
@@ -195,7 +195,7 @@ function helpEntryKeys(commands: readonly AppCommand[], spec: HelpEntrySpec): st
 }
 
 /**
- * junk: one section per loaded extension, listing every bound command it registered, so the
+ * gunk: one section per loaded extension, listing every bound command it registered, so the
  * built-in hunk-viewed keys (and any installed extension's) show up in `?` beside hunk's own.
  * Built-in and bundled commands live under the `hunk.` owner and are curated above instead.
  */

@@ -169,7 +169,7 @@ export const FileRow = memo(function FileRow({
       style={{ width: "100%", height: 1, backgroundColor: rowBackground, flexDirection: "row" }}
       onMouseUp={() => onSelectFile(entry.id)}
     >
-      {/* junk: the selected row's stripe is a glyph, as hunk's own pane draws it, so the
+      {/* gunk: the selected row's stripe is a glyph, as hunk's own pane draws it, so the
           selection reads on a terminal that ignores background colour. */}
       <text fg={selected ? theme.accent : rowBackground} bg={rowBackground}>
         {selected ? "\u258C" : " "}

@@ -62,7 +62,7 @@ function deliver(ctx: ExtensionCommandContext, outcome: SearchOutcome) {
 }
 
 /**
- * junk: with no search running, `n` / `N` step through review notes instead. Hunk ships its note
+ * gunk: with no search running, `n` / `N` step through review notes instead. Hunk ships its note
  * stepping commands unbound because search owns these keys; here the two share them by state.
  * Returns false when a search is active or the review has no notes, so the caller searches.
  */

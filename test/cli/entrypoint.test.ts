@@ -212,11 +212,11 @@ describe("CLI entrypoint contracts", () => {
     expect(existsSync(resolvedPath)).toBe(true);
   });
 
-  test("package manifest exposes junkdiff as an npm exec alias", () => {
+  test("package manifest exposes gunkdiff as an npm exec alias", () => {
     const packageJson = require("../../packages/hunk/package.json");
     expect(packageJson.bin).toEqual({
-      junk: "./bin/hunk.cjs",
-      junkdiff: "./bin/hunk.cjs",
+      gunk: "./bin/hunk.cjs",
+      gunkdiff: "./bin/hunk.cjs",
     });
   });
 

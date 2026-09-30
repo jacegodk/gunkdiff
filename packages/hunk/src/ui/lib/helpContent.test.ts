@@ -146,7 +146,7 @@ describe("buildHelpSections", () => {
     expect(keysFor(sections, "create review note")).toBeUndefined();
   });
 
-  test("junk: a command keeps its row while it is bound, enabled here and now or not", () => {
+  test("gunk: a command keeps its row while it is bound, enabled here and now or not", () => {
     const enabled = builtinCommandMatchProbes();
     const disabled: AppCommand[] = enabled.map((command) =>
       command.id === "hunk.app.refresh" ? { ...command, isEnabled: () => false } : command,

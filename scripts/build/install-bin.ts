@@ -6,7 +6,7 @@ import path from "node:path";
 
 const repoRoot = path.resolve(import.meta.dir, "../..");
 const isWindows = process.platform === "win32";
-const binaryName = isWindows ? "junk.exe" : "junk";
+const binaryName = isWindows ? "gunk.exe" : "gunk";
 const legacyBinaryName = isWindows ? "otdiff.exe" : "otdiff";
 const binaryPath = path.join(repoRoot, "dist", binaryName);
 const builtSkillsDir = path.join(repoRoot, "dist", "skills");

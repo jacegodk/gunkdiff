@@ -74,7 +74,7 @@ function rowLineStableKey(row: ExtensionFileViewRow, hunkIndex: number) {
 }
 
 /**
- * junk: the row of a presentation that folds the whole file into one, or -1 for any other shape.
+ * gunk: the row of a presentation that folds the whole file into one, or -1 for any other shape.
  *
  * Such a row stands for every line of the file, so it hosts a note whose anchor the patch no
  * longer contains — a note written against another base, or on a line that has since moved out

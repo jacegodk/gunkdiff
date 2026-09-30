@@ -96,7 +96,7 @@ export function DiffSectionBody({
   /** The current line within this file, when the review-stream cursor rests in it. */
   cursorHighlight?: CursorHighlight;
   expandedGapKeys?: ReadonlySet<string>;
-  /** junk: gaps showing only some of their lines. */
+  /** gunk: gaps showing only some of their lines. */
   revealedGaps?: ReadonlyMap<string, ReviewGapReveal>;
   /** Validated extension marks for this file, in source coordinates. */
   extensionLineHighlights?: readonly ValidatedLineHighlight[];
@@ -107,7 +107,7 @@ export function DiffSectionBody({
   onStartUserNoteAtHunk?: (hunkIndex: number, target?: UserNoteLineTarget) => void;
   onRowPlanChange?: (rowPlan: DiffSectionRowPlan, highlighted: boolean) => void;
   onToggleGap?: (gapKey: string) => void;
-  /** junk: reveal more of one gap from one of its ends. */
+  /** gunk: reveal more of one gap from one of its ends. */
   onRevealGap?: (gapKey: string, side: "head" | "tail", lines: number) => void;
   showLineNumbers?: boolean;
   showHunkHeaders?: boolean;

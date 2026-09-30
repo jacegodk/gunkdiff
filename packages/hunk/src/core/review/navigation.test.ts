@@ -55,7 +55,7 @@ function move(
 }
 
 describe("review selection movement", () => {
-  test("junk: hunk navigation steps over the hunks of a collapsed file", () => {
+  test("gunk: hunk navigation steps over the hunks of a collapsed file", () => {
     const collapsed: ReviewNavigationModel = {
       ...model(),
       collapsedFileKeys: new Set(["beta"]),

@@ -169,7 +169,7 @@ describe("PTY layout", () => {
       const lines = snapshot.split("\n");
       const betaIndex = lines.findIndex((line) => line.includes("beta.ts"));
       expect(betaIndex).toBeGreaterThan(2);
-      // junk: the gap is blank air and the file's own header is the band that follows it.
+      // gunk: the gap is blank air and the file's own header is the band that follows it.
       const preceding = lines.slice(betaIndex - 3, betaIndex);
       expect(preceding).toHaveLength(3);
       for (const line of preceding) expect(line.trim()).toBe("");
@@ -396,7 +396,7 @@ describe("PTY layout", () => {
       await session.waitForText(REVIEW_MENU_BAR, {
         timeout: 15_000,
       });
-      // junk: the name sits inside the file's band, and the stats keep the right edge.
+      // gunk: the name sits inside the file's band, and the stats keep the right edge.
       const snapshot = await harness.waitForSnapshot(
         session,
         (text) => /█ packages\/visual-studio\S*\.\.\. █ \+1 -1/.test(text),
@@ -426,7 +426,7 @@ describe("PTY layout", () => {
       expect(harness.countMatches(wide, /alpha\.ts/g)).toBeGreaterThanOrEqual(2);
       expect(wide).toMatch(/▌.*▌/);
 
-      // junk joins a lone directory chain into one row, so the sidebar reads `src/ui/` at every
+      // gunk joins a lone directory chain into one row, so the sidebar reads `src/ui/` at every
       // width; what the resize changes is the review pane beside it.
       expect(sidebarFrame(wide)).toContain("src/ui/");
 
@@ -551,7 +551,7 @@ describe("PTY layout", () => {
       const initial = await session.waitForText(REVIEW_MENU_BAR, {
         timeout: 15_000,
       });
-      // junk centres the file name in its band, so the pane's own edge is what moves with the
+      // gunk centres the file name in its band, so the pane's own edge is what moves with the
       // drag: the hunk header sits just right of the divider.
       const initialMainColumn = rightmostColumnOf(initial, "@@ -1 +1,2 @@");
       const initialDividerColumn = sidebarDividerColumn(initial);
@@ -612,7 +612,7 @@ describe("PTY layout", () => {
         .map((line) => line.slice(0, initialDividerColumn))
         .join("\n");
 
-      // junk joins a lone directory chain, so the tree offers one open row for the branch.
+      // gunk joins a lone directory chain, so the tree offers one open row for the branch.
       expect(initialSidebar).toContain("⌄ src/ui/");
       expect(
         initialSidebar

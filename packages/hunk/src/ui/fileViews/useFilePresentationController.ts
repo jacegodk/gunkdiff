@@ -126,7 +126,7 @@ export function useFilePresentationController({
   useEffect(() => {
     const viewKeys = new Set(views.map(registeredFileViewKey));
     const reviewedFileIds = [...fileIds];
-    // junk: views that follow persisted state (a folded viewed file) select themselves for every
+    // gunk: views that follow persisted state (a folded viewed file) select themselves for every
     // file they match that has no stored choice yet, on load and on every reload.
     const autoSelecting = views.filter((registered) => registered.view.autoSelect);
     const readOnlyFiles = autoSelecting.length > 0 ? toReadOnlyFileViews(files) : [];

@@ -149,7 +149,7 @@ export function resolveExtensionPanes(
   const issues: ExtensionApplyIssue[] = [];
   const claimedKeys = new Set<string>();
   const claimedReplacementTargets = new Set<string>();
-  // junk: a pane compiled into the binary is a default, so one the reviewer installed takes the
+  // gunk: a pane compiled into the binary is a default, so one the reviewer installed takes the
   // slot from it. Between two installed panes the first still wins, and it is still reported.
   const yieldedByBuiltIn = new Set<RegisteredPane>();
   const ownerByTarget = new Map<string, RegisteredPane>();

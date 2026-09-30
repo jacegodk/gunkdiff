@@ -220,7 +220,7 @@ export interface TerminalReview {
   /** The store's monotonic revision, reported to anyone ordering this review's publications. */
   stateRevision: number;
   expandedGapsByFileId: Record<string, ReadonlySet<string>>;
-  /** junk: gaps showing only some of their lines, keyed by file id then gap id. */
+  /** gunk: gaps showing only some of their lines, keyed by file id then gap id. */
   revealedGapsByFileId: Record<string, ReadonlyMap<string, ReviewGapReveal>>;
   filter: string;
   draftNote: DraftReviewNote | null;
@@ -230,15 +230,15 @@ export interface TerminalReview {
   reviewNoteCount: number;
   reviewNoteSummaries: SessionReviewNoteSummary[];
   showAgentNotes: boolean;
-  /** junk: whether notes tagged `handled` are shown. */
+  /** gunk: whether notes tagged `handled` are shown. */
   showHandledNotes: boolean;
-  /** junk: flip `showHandledNotes`. */
+  /** gunk: flip `showHandledNotes`. */
   toggleHandledNotes: () => void;
-  /** junk: whether the reviewer's own notes are drawn. */
+  /** gunk: whether the reviewer's own notes are drawn. */
   showUserNotes: boolean;
-  /** junk: flip `showUserNotes`. */
+  /** gunk: flip `showUserNotes`. */
   toggleUserNotes: () => void;
-  /** junk: set or clear the `handled` tag on one stored note; saved user notes persist it. */
+  /** gunk: set or clear the `handled` tag on one stored note; saved user notes persist it. */
   toggleNoteHandled: (noteId: string) => void;
   userNotesByFileId: Record<string, UserReviewNote[]>;
   lineCursor: LineCursor | null;
@@ -251,7 +251,7 @@ export interface TerminalReview {
   /** Adopt the hunk a viewport settled on, without asking any viewport to move. */
   anchorSelection: (fileId: string, hunkIndex: number) => void;
   moveLineCursor: (delta: number) => void;
-  /** junk: move the line cursor without leaving the hunk it is in. */
+  /** gunk: move the line cursor without leaving the hunk it is in. */
   moveLineCursorInHunk: (delta: number) => void;
   /** Select a visible semantic note without moving the viewport. */
   activateNote: (noteId: string) => void;
@@ -270,11 +270,11 @@ export interface TerminalReview {
   sourceStatusByFileId: Record<string, FileSourceStatus>;
   toggleGap: (fileId: string, gapKey: string) => void;
   toggleSelectedHunkGap: () => void;
-  /** junk: show (`count` > 0) or hide 10×count unchanged lines on both sides of the selected hunk. */
+  /** gunk: show (`count` > 0) or hide 10×count unchanged lines on both sides of the selected hunk. */
   revealAroundSelectedHunk: (count: number) => void;
-  /** junk: show `delta` more of one gap's lines, measured from its start (head) or end (tail). */
+  /** gunk: show `delta` more of one gap's lines, measured from its start (head) or end (tail). */
   revealGapSide: (fileId: string, gapKey: string, side: "head" | "tail", delta: number) => void;
-  /** junk: open or close every gap of the selected file, or of every visible file. */
+  /** gunk: open or close every gap of the selected file, or of every visible file. */
   toggleWholeFile: (scope: "file" | "review") => void;
   visibleFiles: DiffFile[];
   addLiveComment: (
@@ -353,7 +353,7 @@ export function useTerminalReview({
   lineCursors?: LineCursor[];
   /** Mixed rendered line and semantic-note stops used by vertical keyboard movement. */
   reviewVerticalStops?: ReviewVerticalStop[];
-  /** junk: read the files the presentation currently draws as a single collapsed row. */
+  /** gunk: read the files the presentation currently draws as a single collapsed row. */
   getCollapsedFileIds?: () => ReadonlySet<string>;
   /**
    * Identity of the review's input as a whole.
@@ -762,7 +762,7 @@ export function useTerminalReview({
       return;
     }
 
-    // junk: a marker that was somewhere else has been navigated here, so it lands on the
+    // gunk: a marker that was somewhere else has been navigated here, so it lands on the
     // hunk's change; the review's very first placement keeps the top of the hunk.
     applyLineCursor(
       lineCursorRef.current
@@ -872,7 +872,7 @@ export function useTerminalReview({
     [currentReviewVerticalStop, focusReviewNoteStop, reviewVerticalStops, revealLineCursor],
   );
 
-  /** junk: move through lines and notes, but only within the hunk the cursor is in. */
+  /** gunk: move through lines and notes, but only within the hunk the cursor is in. */
   const moveLineCursorInHunk = useCallback(
     (delta: number) => {
       const next = findNextReviewVerticalStopInHunk(
@@ -917,7 +917,7 @@ export function useTerminalReview({
    */
   const moveSelection = useCallback(
     (scope: ReviewSelectionScope, delta: number) => {
-      // junk: a file drawn as one row has no per-hunk position, so plain hunk navigation is
+      // gunk: a file drawn as one row has no per-hunk position, so plain hunk navigation is
       // told to step over it. Annotated moves still reach its notes, which stay on that row.
       const collapsedIds = scope === "hunk" ? getCollapsedFileIds?.() : undefined;
       const collapsedFileKeys = collapsedIds?.size
@@ -992,7 +992,7 @@ export function useTerminalReview({
     }
   }, [lowerCommand, runIntent]);
 
-  /** junk: show or hide the notes tagged `handled`, a session-local view toggle. */
+  /** gunk: show or hide the notes tagged `handled`, a session-local view toggle. */
   const toggleHandledNotes = useCallback(() => {
     store.dispatch({
       type: "notes/set-handled-visibility",
@@ -1000,7 +1000,7 @@ export function useTerminalReview({
     });
   }, [store]);
 
-  /** junk: show or hide the reviewer's own notes, a session-local view toggle. */
+  /** gunk: show or hide the reviewer's own notes, a session-local view toggle. */
   const toggleUserNotes = useCallback(() => {
     store.dispatch({
       type: "notes/set-user-visibility",
@@ -1008,7 +1008,7 @@ export function useTerminalReview({
     });
   }, [store]);
 
-  /** junk: flip the `handled` tag on one stored note, user or live. */
+  /** gunk: flip the `handled` tag on one stored note, user or live. */
   const toggleNoteHandled = useCallback(
     (noteId: string) => {
       const snapshot = store.getSnapshot();
@@ -1169,7 +1169,7 @@ export function useTerminalReview({
     }
   }, [applyGapToggle, fileByKey, lowerCommand]);
 
-  /** junk: grow or shrink the unchanged context on both sides of the selected hunk. */
+  /** gunk: grow or shrink the unchanged context on both sides of the selected hunk. */
   const revealAroundSelectedHunk = useCallback(
     (count: number) => {
       if (count === 0) return;
@@ -1187,7 +1187,7 @@ export function useTerminalReview({
   );
 
   /**
-   * junk: open or close every gap of the selected file, or of the whole review.
+   * gunk: open or close every gap of the selected file, or of the whole review.
    *
    * Showing a file whole is the same expansion the gap rows do, so the diff keeps its rows,
    * its notes and its cursor; only the unchanged lines between the hunks arrive.
@@ -1207,7 +1207,7 @@ export function useTerminalReview({
     [fileByKey, lowerCommand, runIntent, startSourceLoad],
   );
 
-  /** junk: grow one gap from one end, for the arrows a collapsed row draws. */
+  /** gunk: grow one gap from one end, for the arrows a collapsed row draws. */
   const revealGapSide = useCallback(
     (fileId: string, gapKey: string, side: "head" | "tail", delta: number) => {
       const file = allFiles.find((entry) => entry.id === fileId);

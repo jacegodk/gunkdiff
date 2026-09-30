@@ -215,7 +215,7 @@ describe("DiffPane copy selection", () => {
       });
       await flush(setup);
       // A named key event, as a terminal sends it: the mock's "PAGEDOWN" also carries a "P"
-      // sequence, which junk binds to the review picker.
+      // sequence, which gunk binds to the review picker.
       await act(async () => {
         setup.renderer.keyInput.emit("keypress", createTestKeyEvent({ name: "pagedown" }));
       });

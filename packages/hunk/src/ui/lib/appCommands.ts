@@ -115,7 +115,7 @@ export interface BuildAppCommandsOptions {
   canAlignCurrentLine: boolean;
   canApplyFilePresentationToAllMatching: boolean;
   canDeleteActiveNote?: boolean;
-  /** junk: whether a stored note is active and no draft is open. */
+  /** gunk: whether a stored note is active and no draft is open. */
   canToggleActiveNoteHandled?: boolean;
   canEditActiveNote?: boolean;
   canReplyToActiveNote?: boolean;
@@ -124,7 +124,7 @@ export interface BuildAppCommandsOptions {
   applyFilePresentationToAllMatching: () => void;
   focusFilter: () => void;
   deleteActiveNote?: () => void;
-  /** junk: set or clear `handled` on the active note. */
+  /** gunk: set or clear `handled` on the active note. */
   toggleActiveNoteHandled?: () => void;
   editActiveNote?: () => void;
   replyToActiveNote?: () => void;
@@ -133,7 +133,7 @@ export interface BuildAppCommandsOptions {
   /** Step note selection through the active surface's measured card order. */
   moveNoteCursor: (delta: number) => void;
   openAgentSkill: () => void;
-  /** junk: open the commit list of whatever the review currently covers. */
+  /** gunk: open the commit list of whatever the review currently covers. */
   openCommitPicker: () => void;
   openReviewPicker: () => void;
   openThemeSelector: () => void;
@@ -143,7 +143,7 @@ export interface BuildAppCommandsOptions {
   scrollCodeHorizontally: (delta: number) => void;
   scrollDiff: (delta: number, unit: ScrollUnit) => void;
   stepDiffLine: (delta: number) => void;
-  /** junk: step the line cursor without leaving the hunk it is in. */
+  /** gunk: step the line cursor without leaving the hunk it is in. */
   stepDiffLineInHunk: (delta: number) => void;
   selectCursorLine: (style: CursorLine) => void;
   selectLayoutMode: (mode: LayoutMode) => void;
@@ -154,16 +154,16 @@ export interface BuildAppCommandsOptions {
   startUserNote: () => void;
   toggleAgentNotes: () => void;
   toggleHandledNotes: () => void;
-  /** junk: show or hide the reviewer's own notes. */
+  /** gunk: show or hide the reviewer's own notes. */
   toggleUserNotes: () => void;
   toggleCopyDecorations: () => void;
   toggleFocusArea: () => void;
   toggleGapForSelectedHunk: () => void;
-  /** junk: show (`count` > 0) or hide unchanged lines around the selected hunk. */
+  /** gunk: show (`count` > 0) or hide unchanged lines around the selected hunk. */
   revealAroundSelectedHunk?: (count: number) => void;
-  /** junk: open or close every gap of the selected file. */
+  /** gunk: open or close every gap of the selected file. */
   toggleWholeSelectedFile: () => void;
-  /** junk: open or close every gap of every visible file. */
+  /** gunk: open or close every gap of every visible file. */
   toggleWholeFiles: () => void;
   toggleHelp: () => void;
   toggleHunkHeaders: () => void;

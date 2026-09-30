@@ -165,7 +165,7 @@ function clamp(value: number, min: number, max: number) {
 const EMPTY_COLLAPSED_FILE_IDS: ReadonlySet<string> = new Set();
 
 /**
- * junk: file ids whose presentation draws the whole file as one row, with every hunk mapped to
+ * gunk: file ids whose presentation draws the whole file as one row, with every hunk mapped to
  * it — a fold. Such a file offers no separate position per hunk, so hunk navigation skips it.
  */
 function collapsedFileViewIds(
@@ -208,7 +208,7 @@ export function App({
   bootstrap: AppBootstrap;
   /** Whether this surface may replace the session-owned extension registry. */
   canReloadExtensions?: boolean;
-  /** junk: whether this mount is the process's first, the only one that offers the review picker. */
+  /** gunk: whether this mount is the process's first, the only one that offers the review picker. */
   offerReviewPicker?: boolean;
   hostClient?: HunkSessionBrokerClient;
   noticeText?: string | null;
@@ -258,7 +258,7 @@ export function App({
   const noteGeometryRef = useRef<AgentNoteGeometrySnapshot | null>(null);
   const [lineCursors, setLineCursors] = useState<LineCursor[]>([]);
   const [reviewVerticalStops, setReviewVerticalStops] = useState<ReviewVerticalStop[]>([]);
-  // junk: file ids the presentation currently draws as one collapsed row. Written after the
+  // gunk: file ids the presentation currently draws as one collapsed row. Written after the
   // layouts resolve below; hunk navigation reads it at key time, never during this render.
   const collapsedFileIdsRef = useRef<ReadonlySet<string>>(EMPTY_COLLAPSED_FILE_IDS);
   const getCollapsedFileIds = useCallback(() => collapsedFileIdsRef.current, []);
@@ -388,7 +388,7 @@ export function App({
     onReloadSession,
     onTransientNotice: showTransientNotice,
   });
-  // `junk diff` with no target: offer the worktree and base choice once, right after the
+  // `gunk diff` with no target: offer the worktree and base choice once, right after the
   // process's first mount. A reload remounts App with `offerReviewPicker` off, so `r` or a
   // daemon reload never asks again.
   const reviewPickerOfferedRef = useRef(false);
@@ -1049,7 +1049,7 @@ export function App({
     review.moveLineCursor(delta);
   };
 
-  /** junk: the same step, bounded by the hunk the cursor is in. */
+  /** gunk: the same step, bounded by the hunk the cursor is in. */
   const stepDiffLineInHunk = (delta: number) => {
     if (selectionActionsRef.current?.move(delta)) return;
     if (cursorLine === "off") {

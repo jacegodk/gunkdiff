@@ -98,14 +98,14 @@ describe("buildTreeSidebarEntries", () => {
 
   test("keeps an absolute root marker on the first directory row", () => {
     const entries = buildTreeSidebarEntries([src("/etc/hosts")]);
-    // junk: the root holds nothing but `etc`, so the chain is one row.
+    // gunk: the root holds nothing but `etc`, so the chain is one row.
     expect(entries.map((e) => (e.kind === "directory" ? e.label : e.kind))).toEqual([
       "/etc/",
       "file",
     ]);
   });
 
-  test("junk: a directory holding nothing but one directory joins with it", () => {
+  test("gunk: a directory holding nothing but one directory joins with it", () => {
     const label = (entries: ReturnType<typeof buildTreeSidebarEntries>) =>
       entries.map((e) =>
         e.kind === "file"
@@ -133,7 +133,7 @@ describe("buildTreeSidebarEntries", () => {
     ).toEqual(["0:dir:src/", "1:dir:ui/panes/", "2:file:a.ts", "1:dir:core/run/", "2:file:b.ts"]);
   });
 
-  test("junk: a directory row carries the path it stands for and what it holds", () => {
+  test("gunk: a directory row carries the path it stands for and what it holds", () => {
     const entries = buildTreeSidebarEntries([src("src/ui/a.ts"), src("src/b.ts")]);
     const directories = entries.filter((entry) => entry.kind === "directory");
     expect(directories.map((entry) => [entry.path, entry.descendantFileCount])).toEqual([
@@ -142,7 +142,7 @@ describe("buildTreeSidebarEntries", () => {
     ]);
   });
 
-  test("junk: collapsing a directory hides what sits under it and nothing else", () => {
+  test("gunk: collapsing a directory hides what sits under it and nothing else", () => {
     const entries = buildTreeSidebarEntries([
       src("src/ui/a.ts"),
       src("src/b.ts"),
@@ -162,7 +162,7 @@ describe("buildTreeSidebarEntries", () => {
     expect(shown(new Set(["nowhere"]))).toEqual(shown(new Set()));
   });
 
-  test("junk: a path names its ancestors, and toggling or revealing moves one at a time", () => {
+  test("gunk: a path names its ancestors, and toggling or revealing moves one at a time", () => {
     expect(sidebarDirectoryPaths("src/ui/panes/a.ts")).toEqual(["src", "src/ui", "src/ui/panes"]);
     expect(sidebarDirectoryPaths("a.ts")).toEqual([]);
 

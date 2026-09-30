@@ -79,7 +79,7 @@ export function dimRailColor(color: string, theme: AppTheme) {
 }
 
 /**
- * junk: the filled band that starts a file. Bright enough to separate two files at a glance,
+ * gunk: the filled band that starts a file. Bright enough to separate two files at a glance,
  * blended a little toward the pane so it does not read as white on a dark theme.
  */
 export function fileBandColor(theme: AppTheme) {

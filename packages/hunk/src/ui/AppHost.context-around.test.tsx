@@ -40,7 +40,7 @@ async function waitForFrame(
  * the context below the first hunk.
  */
 function createRepo() {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "junk-context-around-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gunk-context-around-")));
   execSync("git init -q -b main && git config user.email test@test && git config user.name test", {
     cwd: dir,
     stdio: "ignore",
@@ -57,7 +57,7 @@ function createRepo() {
   return dir;
 }
 
-describe("junk: context around the selected hunk", () => {
+describe("gunk: context around the selected hunk", () => {
   test("F shows the whole file and F again puts the diff back", async () => {
     const dir = createRepo();
     const bootstrap = await loadAppBootstrap(

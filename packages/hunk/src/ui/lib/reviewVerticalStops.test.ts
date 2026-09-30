@@ -171,7 +171,7 @@ describe("review vertical stops", () => {
     expect(findNextReviewNoteStop(stops, stops[2]!, -1)?.noteId).toBe("view-note");
   });
 
-  test("junk: j and k walk the hunks' rows, crossing into the next hunk and skipping context", () => {
+  test("gunk: j and k walk the hunks' rows, crossing into the next hunk and skipping context", () => {
     const stop = (hunkIndex: number, line: number, expandedGapKey?: string) => ({
       kind: "line" as const,
       cursor: {

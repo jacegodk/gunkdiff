@@ -575,7 +575,7 @@ async function pressHunkNavigationKey(
 }
 
 function firstCrossFileHunkNavigationHeader(frame: string) {
-  // junk: a file header is a band with the name in the middle of it.
+  // gunk: a file header is a band with the name in the middle of it.
   return (
     frame
       .split("\n")

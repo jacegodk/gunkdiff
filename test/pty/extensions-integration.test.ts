@@ -456,7 +456,7 @@ describe("PTY extensions", () => {
       expect(prompt).toContain(".hunk/extensions");
       expect(prompt).toContain("Extensions run with your user permissions.");
       // The extension has not run yet, so both files are still under review. The prompt covers
-      // the middle of the screen, where junk centres a file's name, so count them in the header.
+      // the middle of the screen, where gunk centres a file's name, so count them in the header.
       expect(prompt).toContain("2 files");
 
       await session.press("t");
@@ -722,7 +722,7 @@ describe("PTY extensions", () => {
       ],
       cwd: fixture.dir,
       cols: 240,
-      // junk: the View menu is one row longer than hunk's, so this needs room to show it all.
+      // gunk: the View menu is one row longer than hunk's, so this needs room to show it all.
       rows: 32,
       env: { XDG_CONFIG_HOME: configHome },
     });
@@ -1002,7 +1002,7 @@ describe("PTY extensions", () => {
       }
       expect(menu).not.toBeNull();
       expect(menu!).toMatch(/Toggle review triage\s+Y/);
-      // junk binds `x` itself (show more context), so the extension's second command keeps its
+      // gunk binds `x` itself (show more context), so the extension's second command keeps its
       // menu entry and loses only the key.
       expect(menu).toMatch(/Mark selected hunk…\s+│/);
       expect(menu).toContain("Center current review line");

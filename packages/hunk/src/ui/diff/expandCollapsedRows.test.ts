@@ -169,7 +169,7 @@ describe("expandCollapsedRows", () => {
     expect(third.right.spans[0]?.text).toBe("gamma");
   });
 
-  test("junk: a partly revealed gap shows head and tail lines around a smaller collapsed row", () => {
+  test("gunk: a partly revealed gap shows head and tail lines around a smaller collapsed row", () => {
     // Gap covers source lines 1-6 (alpha..zeta); show one from the top and two from the bottom.
     const rows = expandCollapsedRows(
       [makeCollapsedRow("before", 1, [1, 6], [1, 6]), makeHunkHeader(1)],

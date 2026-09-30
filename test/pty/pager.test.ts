@@ -36,7 +36,7 @@ async function scrollWheelUntil(
   throw new Error(lastErrorMessage);
 }
 
-/** junk bundles hunk-viewed, so its menu bar carries an Extensions menu the upstream bar lacks. */
+/** gunk bundles hunk-viewed, so its menu bar carries an Extensions menu the upstream bar lacks. */
 describe("PTY pager", () => {
   test("pager mode hides chrome and pages forward on space", async () => {
     const fixture = harness.createPagerPatchFixture();

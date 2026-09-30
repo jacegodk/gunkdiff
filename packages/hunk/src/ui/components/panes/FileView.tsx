@@ -64,7 +64,7 @@ function SymbolicFileViewRow({
     for (const span of row.spans) {
       const fallbackForeground = symbolicToneColor(span.tone, theme);
       const attributes = symbolicTextAttributes(span.attributes);
-      // junk: a span-level change tint sits under the syntax colors, like the row background.
+      // gunk: a span-level change tint sits under the syntax colors, like the row background.
       const bg =
         span.background === "added"
           ? theme.addedBg

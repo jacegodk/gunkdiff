@@ -969,7 +969,7 @@ describe("notes/start-draft", () => {
     ).toThrow(ReviewIntentPlanningError);
   });
 
-  test("junk: showing a file whole opens every gap it has, and closing puts them all back", () => {
+  test("gunk: showing a file whole opens every gap it has, and closing puts them all back", () => {
     // Expansion needs a source to read, so the file states one.
     const withSource = () =>
       createTestReviewState([{ key: "alpha", sourceIdentity: "sha" }, "beta"]);
@@ -1024,7 +1024,7 @@ describe("notes/start-draft", () => {
     ).toEqual([]);
   });
 
-  test("junk: showing every file whole covers the visible stream", () => {
+  test("gunk: showing every file whole covers the visible stream", () => {
     const plan = planReviewIntent(
       createTestReviewState([{ key: "alpha", sourceIdentity: "sha" }, "beta"]),
       { type: "expansion/set-all", expanded: true },
@@ -1034,7 +1034,7 @@ describe("notes/start-draft", () => {
     expect(plan.outcome).toMatchObject({ type: "expansion/files-set", expanded: true });
   });
 
-  test("junk: one gap can be revealed from either end, and rejects a gap that is not there", () => {
+  test("gunk: one gap can be revealed from either end, and rejects a gap that is not there", () => {
     const plan = planReviewIntent(createTestReviewState(), {
       type: "expansion/reveal-gap",
       fileKey: "alpha",
@@ -1085,7 +1085,7 @@ describe("notes/start-draft", () => {
   });
 });
 
-describe("expansion/reveal-around (junk)", () => {
+describe("expansion/reveal-around (gunk)", () => {
   test("reveals lines next to the hunk on both sides, growing to a full expansion", () => {
     // Test fixture: alpha's hunk 1 has a 9-line gap before it (lines 2-10) and no gap after.
     const plan = planReviewIntent(createTestReviewState(), {

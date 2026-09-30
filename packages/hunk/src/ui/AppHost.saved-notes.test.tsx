@@ -45,7 +45,7 @@ async function waitForFrame(
 
 /** A repository on `main` with one modified tracked file. */
 function createRepo() {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "junk-saved-notes-repo-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gunk-saved-notes-repo-")));
   execSync("git init -q -b main && git config user.email test@test && git config user.name test", {
     cwd: dir,
     stdio: "ignore",
@@ -59,7 +59,7 @@ function createRepo() {
 let stateHome: string;
 let previousStateHome: string | undefined;
 beforeEach(() => {
-  stateHome = mkdtempSync(join(tmpdir(), "junk-saved-notes-state-"));
+  stateHome = mkdtempSync(join(tmpdir(), "gunk-saved-notes-state-"));
   previousStateHome = process.env.XDG_STATE_HOME;
   process.env.XDG_STATE_HOME = stateHome;
 });

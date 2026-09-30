@@ -67,17 +67,17 @@ export type AppCommandReviewEffect =
   | { kind: "notes/start-reply-active" }
   /** Delete or dismiss the active stored leaf note. */
   | { kind: "notes/remove-active" }
-  /** junk: flip the `handled` tag on the active stored note. */
+  /** gunk: flip the `handled` tag on the active stored note. */
   | { kind: "notes/toggle-handled-active" }
   /** Flip the gap the shared policy says this selection reaches. */
   | { kind: "expansion/toggle-selected-gap" }
-  /** junk: show or hide unchanged lines on both sides of the selected hunk, 10 per count. */
+  /** gunk: show or hide unchanged lines on both sides of the selected hunk, 10 per count. */
   | { kind: "expansion/reveal-around-selected"; direction: 1 | -1 }
-  /** junk: open or close every gap of the selected file, or of every visible file. */
+  /** gunk: open or close every gap of the selected file, or of every visible file. */
   | { kind: "expansion/toggle-file" }
   | { kind: "expansion/toggle-all-files" };
 
-/** junk: unchanged lines one `x` / `X` press reveals or hides on each side of the hunk. */
+/** gunk: unchanged lines one `x` / `X` press reveals or hides on each side of the hunk. */
 export const CONTEXT_REVEAL_STEP = 10;
 
 export interface AppCommandCatalogEntry {
@@ -479,7 +479,7 @@ const BUILTIN_COMMANDS = [
     closesMenu: true,
   },
   {
-    // junk: the commits of the current review, opened one at a time.
+    // gunk: the commits of the current review, opened one at a time.
     id: "hunk.app.openCommitPicker",
     title: "Pick a commit to review",
     category: "app",

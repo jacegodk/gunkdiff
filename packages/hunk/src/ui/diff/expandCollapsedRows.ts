@@ -26,7 +26,7 @@ export type FileSourceStatus =
 export interface ExpandCollapsedRowsOptions {
   layout: ExpansionLayout;
   expandedKeys: ReadonlySet<string>;
-  /** junk: gaps that show only `head` lines from their start and `tail` lines from their end. */
+  /** gunk: gaps that show only `head` lines from their start and `tail` lines from their end. */
   revealedGaps?: ReadonlyMap<string, ReviewGapReveal>;
   sourceStatus: FileSourceStatus | undefined;
   tabWidth?: number;
@@ -223,7 +223,7 @@ export function expandCollapsedRows(
     };
 
     if (reveal !== undefined) {
-      // junk: a partly revealed gap shows its head lines, then the collapsed row for what is
+      // gunk: a partly revealed gap shows its head lines, then the collapsed row for what is
       // still hidden, then its tail lines, so the shown lines sit next to the hunks around it.
       const { head, tail } = clampReviewGapReveal(reveal, lineCount);
       const hidden = lineCount - head - tail;

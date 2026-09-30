@@ -9,7 +9,7 @@ export interface SearchHit {
   side: "old" | "new";
   line: number;
   range: readonly [number, number];
-  /** junk: set when only the file's source carries this line, so the diff must open to show it. */
+  /** gunk: set when only the file's source carries this line, so the diff must open to show it. */
   hidden?: true;
 }
 
@@ -34,7 +34,7 @@ const initialState: SearchState = {
 let state: SearchState = initialState;
 const listeners = new Set<() => void>();
 /**
- * junk: source text per file, for scanning what the patch does not carry.
+ * gunk: source text per file, for scanning what the patch does not carry.
  *
  * A patch holds the changed lines and a little context, so scanning it alone never finds the
  * unchanged code an expansion brings on screen. The reviewed file's own text does, and it is
@@ -167,7 +167,7 @@ export function setQuery(query: string): void {
   publish({ query, hits: [], currentIndex: -1 });
 }
 
-/** junk: retain one file's source text for scanning, tied to the patch it was read beside. */
+/** gunk: retain one file's source text for scanning, tied to the patch it was read beside. */
 export function setSearchDocument(
   file: Pick<ExtensionDiffFile, "id" | "patch">,
   text: string,
@@ -175,13 +175,13 @@ export function setSearchDocument(
   documents.set(file.id, { patch: file.patch, text });
 }
 
-/** junk: whether this file's source has been read and still matches the patch on screen. */
+/** gunk: whether this file's source has been read and still matches the patch on screen. */
 export function hasSearchDocument(file: Pick<ExtensionDiffFile, "id" | "patch">): boolean {
   return documents.get(file.id)?.patch === file.patch;
 }
 
 /**
- * junk: scan one file, preferring its source over its patch.
+ * gunk: scan one file, preferring its source over its patch.
  *
  * Every line of the source is searched, so a match in unchanged code is found whether or not it
  * is on screen; the ones the patch does not carry are marked `hidden`, and the caller opens the

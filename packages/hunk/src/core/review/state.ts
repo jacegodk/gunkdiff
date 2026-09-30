@@ -51,7 +51,7 @@ export function reviewNoteVisibleByPolicy(
   showUserNotes = true,
 ) {
   if (!showHandledNotes && note.tags?.includes("handled")) return false;
-  // junk: the reviewer's own notes have their own toggle, so they can be cleared off the diff
+  // gunk: the reviewer's own notes have their own toggle, so they can be cleared off the diff
   // without unhiding the agent's.
   if (note.source === "user") return showUserNotes;
   return showAgentNotes;
@@ -186,7 +186,7 @@ export interface ReviewExpandedGapState {
   fileKey: string;
   gapId: string;
   expanded: boolean;
-  /** junk: the part of a gap shown while `expanded` is false; absent when fully collapsed. */
+  /** gunk: the part of a gap shown while `expanded` is false; absent when fully collapsed. */
   reveal?: ReviewGapReveal;
 }
 
@@ -203,9 +203,9 @@ export interface ReviewState {
   reveal: ReviewRevealIntent;
   filter: string;
   showAgentNotes: boolean;
-  /** junk: whether notes tagged `handled` are shown; a session-local toggle, on by default. */
+  /** gunk: whether notes tagged `handled` are shown; a session-local toggle, on by default. */
   showHandledNotes: boolean;
-  /** junk: whether the reviewer's own notes are drawn. */
+  /** gunk: whether the reviewer's own notes are drawn. */
   showUserNotes: boolean;
   /** Stable identity of the stored note the reviewer explicitly selected. */
   activeNoteId: string | null;

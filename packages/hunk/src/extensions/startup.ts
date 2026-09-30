@@ -27,7 +27,7 @@ export interface LoadStartupExtensionsOptions {
   projectRoot?: string;
   /** Product-owned ids user extension modules may not claim. */
   reservedExtensionIds?: ReadonlySet<string>;
-  /** Extensions compiled into junk; the app and CLI bootstraps pass junk's list, tests pass none. */
+  /** Extensions compiled into gunk; the app and CLI bootstraps pass gunk's list, tests pass none. */
   builtInExtensions?: readonly BuiltInExtension[];
   /**
    * Sink extension `ctx.notify` calls land in. Pass the hub from an earlier

@@ -27,7 +27,7 @@ export interface AgentInlineNoteActions {
   onEdit?: () => void;
   onReply?: () => void;
   onDelete?: () => void;
-  /** junk: set or clear the note's `handled` tag. */
+  /** gunk: set or clear the note's `handled` tag. */
   onToggleHandled?: () => void;
 }
 
@@ -132,7 +132,7 @@ function threadedInlineNoteTitle(annotation: AgentAnnotation) {
   const author = sanitizeTerminalLine(annotation.author?.trim() ?? "");
   const label = annotation.source === "user" ? "Your note" : author || "Agent note";
   const age = shortReviewNoteAge(annotation.createdAt);
-  // junk: a saved note someone already acted on says so, so it can be deleted with D.
+  // gunk: a saved note someone already acted on says so, so it can be deleted with D.
   const handled = annotation.tags?.includes("handled") ? " · handled" : "";
   return `${label}${age ? ` · ${age}` : ""}${handled}`;
 }

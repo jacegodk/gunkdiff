@@ -29,11 +29,11 @@ export type ReviewAction =
     }
   | { type: "filter/set"; filter: string }
   | { type: "notes/set-visibility"; visible: boolean }
-  /** junk: show or hide the notes tagged `handled`. */
+  /** gunk: show or hide the notes tagged `handled`. */
   | { type: "notes/set-handled-visibility"; visible: boolean }
-  /** junk: show or hide the reviewer's own notes. */
+  /** gunk: show or hide the reviewer's own notes. */
   | { type: "notes/set-user-visibility"; visible: boolean }
-  /** junk: set or clear the `handled` tag on one stored note, user or live. */
+  /** gunk: set or clear the `handled` tag on one stored note, user or live. */
   | { type: "notes/set-handled"; noteId: string; handled: boolean }
   | { type: "notes/add-live"; notes: readonly ReviewStoredNote[] }
   | { type: "notes/remove-live"; noteId: string }
@@ -50,6 +50,6 @@ export type ReviewAction =
   /** Replace one saved user note in place and retire its edit draft in one revision. */
   | { type: "draft/save-edit"; note: ReviewStoredNote }
   | { type: "expansion/toggle"; fileKey: string; gapId: string; expanded: boolean }
-  /** junk: show part of a collapsed gap; a zero reveal collapses it again. */
+  /** gunk: show part of a collapsed gap; a zero reveal collapses it again. */
   | { type: "expansion/reveal"; fileKey: string; gapId: string; reveal: ReviewGapReveal }
   | { type: "expansion/set-source-status"; fileKey: string; status: ReviewSourceStatus };

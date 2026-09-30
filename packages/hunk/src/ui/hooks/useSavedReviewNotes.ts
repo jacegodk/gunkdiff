@@ -67,7 +67,7 @@ export function useSavedReviewNotes({
           );
         } catch (error) {
           log(
-            `junk: could not delete handled notes in ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+            `gunk: could not delete handled notes in ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
@@ -107,7 +107,7 @@ export function useSavedReviewNotes({
         failedRef.current = false;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        log(`junk: could not save notes to ${filePath}: ${message}`);
+        log(`gunk: could not save notes to ${filePath}: ${message}`);
         if (!failedRef.current) {
           failedRef.current = true;
           onNotice(`Could not save notes: ${message}`);

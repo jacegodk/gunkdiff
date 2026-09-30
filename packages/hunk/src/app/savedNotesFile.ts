@@ -1,5 +1,5 @@
 /**
- * junk: the notes file behind `core/review/savedNotes`. The review model stays platform-neutral;
+ * gunk: the notes file behind `core/review/savedNotes`. The review model stays platform-neutral;
  * this module owns the path scheme and the atomic read-merge-write on disk.
  */
 import { createHash } from "node:crypto";
@@ -38,12 +38,12 @@ export function readSavedNotes(
   try {
     const parsed = JSON.parse(readFileSync(filePath, "utf8")) as Partial<SavedNotesDocument>;
     if (parsed.version !== 1 || typeof parsed.notes !== "object" || parsed.notes === null) {
-      log(`junk: ignoring ${filePath}: unsupported format`);
+      log(`gunk: ignoring ${filePath}: unsupported format`);
       return [];
     }
     return Object.values(parsed.notes);
   } catch (error) {
-    log(`junk: ignoring ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+    log(`gunk: ignoring ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
     return [];
   }
 }

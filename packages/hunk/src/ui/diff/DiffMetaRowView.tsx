@@ -19,11 +19,11 @@ export interface DiffMetaRowViewProps {
   onHoverRow?: (rowKey: string) => void;
   onStartUserNoteAtHunk?: (hunkIndex: number, target?: UserNoteLineTarget) => void;
   onToggleGap?: (gapKey: string) => void;
-  /** junk: reveal `lines` more of this gap, from its start (head) or its end (tail). */
+  /** gunk: reveal `lines` more of this gap, from its start (head) or its end (tail). */
   onRevealGap?: (gapKey: string, side: "head" | "tail", lines: number) => void;
 }
 
-/** junk: unchanged lines one click on a gap row's arrow reveals. */
+/** gunk: unchanged lines one click on a gap row's arrow reveals. */
 const GAP_ARROW_STEP = 10;
 
 /** Build the rendered label text for one collapsed gap row. */
@@ -55,7 +55,7 @@ export function DiffMetaRowView({
     return null;
   }
 
-  // junk: a collapsed gap can be opened from either end without opening all of it. The arrow
+  // gunk: a collapsed gap can be opened from either end without opening all of it. The arrow
   // pointing down extends the code above, the one pointing up extends the code below. They sit
   // in the middle of the row, where the eye already is when reading the gap's label.
   const gapKey = row.type === "collapsed" ? reviewGapId(row.position, row.hunkIndex) : null;

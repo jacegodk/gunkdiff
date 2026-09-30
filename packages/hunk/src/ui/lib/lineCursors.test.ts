@@ -355,7 +355,7 @@ describe("firstLineCursorInHunk", () => {
     });
   });
 
-  test("junk: arriving at a hunk seeds on its first changed line, not the context above it", () => {
+  test("gunk: arriving at a hunk seeds on its first changed line, not the context above it", () => {
     // A hunk that opens with a context line: the plain seed takes that line, the arriving
     // seed skips past it to the change.
     const wrapped = cursorsFor([createContextWrappedFile("alpha", "alpha.ts")], "unified");

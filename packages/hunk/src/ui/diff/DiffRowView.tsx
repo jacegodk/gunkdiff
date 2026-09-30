@@ -34,7 +34,7 @@ export interface DiffRowViewProps {
   onHoverRow?: (rowKey: string) => void;
   onStartUserNoteAtHunk?: (hunkIndex: number, target?: UserNoteLineTarget) => void;
   onToggleGap?: (gapKey: string) => void;
-  /** junk: reveal more of one gap from one of its ends. */
+  /** gunk: reveal more of one gap from one of its ends. */
   onRevealGap?: (gapKey: string, side: "head" | "tail", lines: number) => void;
 }
 

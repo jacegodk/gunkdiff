@@ -63,7 +63,7 @@ interface ChangedFileSpec {
 /**
  * The review's menu bar, as the app draws it.
  *
- * junk bundles hunk-viewed, so a real session carries an Extensions menu between Agent and
+ * gunk bundles hunk-viewed, so a real session carries an Extensions menu between Agent and
  * Help, and a narrow terminal drops the tail of the bar into an ellipsis. Matching up to Agent
  * covers every width and both extension states.
  */
@@ -317,7 +317,7 @@ export function createPtyHarness() {
     isolatedConfigHome ??= makeTempDir("hunk-tuistory-config-");
     return isolatedConfigHome;
   }
-  // junk writes saved notes and viewed marks under XDG_STATE_HOME; keep test repos out of the
+  // gunk writes saved notes and viewed marks under XDG_STATE_HOME; keep test repos out of the
   // developer's own state.
   let isolatedStateHome: string | undefined;
   function stateHome() {

@@ -127,13 +127,13 @@ export function findNextReviewVerticalStop(
   return stops[nextIndex] ?? null;
 }
 
-/** junk: whether a stop is one of a hunk's own rows rather than revealed unchanged context. */
+/** gunk: whether a stop is one of a hunk's own rows rather than revealed unchanged context. */
 function isReviewHunkStop(stop: ReviewVerticalStop): boolean {
   return stop.kind === "note" || stop.cursor.expandedGapKey === undefined;
 }
 
 /**
- * junk: move through the hunks' own rows, skipping the unchanged context a reveal opened.
+ * gunk: move through the hunks' own rows, skipping the unchanged context a reveal opened.
  *
  * Stepping off the last row of a hunk lands on the first row of the next one, so a walk reads
  * the changes without wading through context; the arrows keep the unrestricted walk. A cursor

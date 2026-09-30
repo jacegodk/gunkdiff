@@ -172,7 +172,7 @@ export function storedReviewNoteActions({
   onRemoveLiveNote?: (noteId: string) => void;
   onRemoveUserNote?: (noteId: string) => void;
   onReplyToNote?: (noteId: string, options?: { preserveViewport?: boolean }) => void;
-  /** junk: flip the `handled` tag; offered on every stored note. */
+  /** gunk: flip the `handled` tag; offered on every stored note. */
   onToggleNoteHandled?: (noteId: string) => void;
   source: "agent" | "ai" | "user";
 }): VisibleAgentNote["actions"] {
@@ -406,7 +406,7 @@ export function DiffPane({
   codeHorizontalOffset?: number;
   diffContentWidth: number;
   expandedGapsByFileId?: Record<string, ReadonlySet<string>>;
-  /** junk: gaps showing only some of their lines, keyed by file id then gap id. */
+  /** gunk: gaps showing only some of their lines, keyed by file id then gap id. */
   revealedGapsByFileId?: Record<string, ReadonlyMap<string, ReviewGapReveal>>;
   /** Validated alternate layouts, keyed by file id; raw Pierre remains the fallback. */
   fileViews?: ReadonlyMap<string, ResolvedFileViewLayout>;
@@ -443,9 +443,9 @@ export function DiffPane({
   /** Avoid clearing another surface when this pane mounts dynamically in the shared renderer. */
   skipInitialIntermediateRender?: boolean;
   showAgentNotes: boolean;
-  /** junk: whether notes tagged `handled` are drawn; defaults to shown. */
+  /** gunk: whether notes tagged `handled` are drawn; defaults to shown. */
   showHandledNotes?: boolean;
-  /** junk: whether the reviewer's own notes are drawn. */
+  /** gunk: whether the reviewer's own notes are drawn. */
   showUserNotes?: boolean;
   showLineNumbers: boolean;
   showHunkHeaders: boolean;
@@ -478,7 +478,7 @@ export function DiffPane({
   onReplyToNote?: (noteId: string, options?: { preserveViewport?: boolean }) => void;
   onRemoveLiveNote?: (noteId: string) => void;
   onRemoveUserNote?: (noteId: string) => void;
-  /** junk: flip the `handled` tag on a stored note. */
+  /** gunk: flip the `handled` tag on a stored note. */
   onToggleNoteHandled?: (noteId: string) => void;
   onSaveDraftNote?: (editorBody?: string) => void;
   onStartUserNoteAtHunk?: StartUserNoteAtHunk;
@@ -492,7 +492,7 @@ export function DiffPane({
   onScrollCodeHorizontally?: (delta: number) => void;
   onSelectFile: (fileId: string) => void;
   onToggleGap?: (fileId: string, gapKey: string) => void;
-  /** junk: reveal more of one gap from one of its ends. */
+  /** gunk: reveal more of one gap from one of its ends. */
   onRevealGap?: (fileId: string, gapKey: string, side: "head" | "tail", lines: number) => void;
   onLineCursorsChange?: (cursors: LineCursor[]) => void;
   onReviewVerticalStopsChange?: (stops: ReviewVerticalStop[]) => void;

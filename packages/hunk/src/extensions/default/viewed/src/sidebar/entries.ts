@@ -178,7 +178,7 @@ function liftSidebarEntry(entry: SidebarEntry): SidebarEntry {
 }
 
 /**
- * junk: join a directory that holds nothing but one directory into a single row.
+ * gunk: join a directory that holds nothing but one directory into a single row.
  *
  * A path like `src/ui/panes` spends three rows on one branch, which is three rows of sidebar
  * for no choice offered. Merging the chain reads as `src/ui/panes/` on one row and leaves the

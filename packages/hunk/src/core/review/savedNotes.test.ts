@@ -22,7 +22,7 @@ import {
 
 let dir: string;
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), "junk-saved-notes-"));
+  dir = mkdtempSync(join(tmpdir(), "gunk-saved-notes-"));
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });

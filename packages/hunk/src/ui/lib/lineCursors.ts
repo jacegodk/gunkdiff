@@ -24,7 +24,7 @@ export interface LineCursor {
   target: UserNoteLineTarget;
   /** Exact collapsed gap that produced this cursor, when it is a revealed source line. */
   expandedGapKey?: string;
-  /** junk: set on an added or removed line; a context line carries no change of its own. */
+  /** gunk: set on an added or removed line; a context line carries no change of its own. */
   changed?: true;
 }
 
@@ -172,7 +172,7 @@ export function firstLineCursorInHunk(
 }
 
 /**
- * junk: the first added or removed line of one hunk, for a marker arriving from another hunk.
+ * gunk: the first added or removed line of one hunk, for a marker arriving from another hunk.
  *
  * Navigating to a hunk is a move to the change it carries, so the marker — and anything
  * anchored to it, such as a new note — lands on that change rather than on the context line

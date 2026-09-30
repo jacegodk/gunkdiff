@@ -27,7 +27,7 @@ export interface DiffSectionRowPlan {
 
 export interface BuildDiffSectionRowPlanOptions {
   expandedKeys?: ReadonlySet<string>;
-  /** junk: gaps showing only some of their lines. */
+  /** gunk: gaps showing only some of their lines. */
   revealedGaps?: ReadonlyMap<string, ReviewGapReveal>;
   file: DiffFile | undefined;
   highlightedDiff?: HighlightedDiffCode | null;
@@ -77,7 +77,7 @@ export function buildDiffSectionRowPlan({
     };
   }
 
-  // junk: the loaded source's length is what gives a partial patch its trailing gap.
+  // gunk: the loaded source's length is what gives a partial patch its trailing gap.
   const sourceTotalLines =
     sourceStatus?.kind === "loaded"
       ? normalizedReviewSourceLines(sourceStatus.text).length

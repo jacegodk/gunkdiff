@@ -244,7 +244,7 @@ describe("extension panes", () => {
     expect(issues).toEqual([]);
   });
 
-  test("junk: an installed pane takes a replaced slot from a pane compiled into the binary", () => {
+  test("gunk: an installed pane takes a replaced slot from a pane compiled into the binary", () => {
     const result = createEmptyExtensionLoadResult();
     const builtIn = { id: "files", component: () => null, replaces: "hunk:files" };
     const installed = { id: "files", component: () => null, replaces: "hunk:files" };

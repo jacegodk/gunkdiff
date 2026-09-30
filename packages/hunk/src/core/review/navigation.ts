@@ -108,7 +108,7 @@ export interface ReviewNavigationModel {
   /** Effective stored-note identity from which an exact-note move begins. */
   activeNoteId?: string;
   /**
-   * junk: files a presentation has collapsed to a single row. Their hunks have no distinct
+   * gunk: files a presentation has collapsed to a single row. Their hunks have no distinct
    * position on screen, so hunk navigation steps over them instead of stopping once per hunk.
    */
   collapsedFileKeys?: ReadonlySet<string>;

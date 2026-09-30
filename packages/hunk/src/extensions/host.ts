@@ -26,13 +26,13 @@ import {
 export interface BuiltInExtension {
   id: string;
   factory: ExtensionFactory;
-  /** Reported as the source path; `junk:bundled/<name>` by convention. */
+  /** Reported as the source path; `gunk:bundled/<name>` by convention. */
   sourcePath: string;
 }
 
 export interface LoadExtensionsOptions {
   candidates: readonly ExtensionCandidate[];
-  /** Extensions shipped inside junk that take their ids before discovery runs. */
+  /** Extensions shipped inside gunk that take their ids before discovery runs. */
   builtInExtensions?: readonly BuiltInExtension[];
   /** Full candidate order represented after this pass; defaults to `candidates`. */
   allCandidates?: readonly ExtensionCandidate[];
@@ -73,9 +73,9 @@ async function importExtensionModule(path: string): Promise<unknown> {
 }
 
 /** Source-path prefix of built-in extensions; an installed copy of one is skipped, not refused. */
-export const BUILT_IN_SOURCE_PREFIX = "junk:bundled/";
+export const BUILT_IN_SOURCE_PREFIX = "gunk:bundled/";
 
-/** Report whether an installed candidate is a copy of an extension compiled into junk. */
+/** Report whether an installed candidate is a copy of an extension compiled into gunk. */
 function shadowedByBuiltIn(candidate: ExtensionCandidate, claimedBy: ReadonlyMap<string, string>) {
   return claimedBy.get(candidate.id)?.startsWith(BUILT_IN_SOURCE_PREFIX) ?? false;
 }
@@ -158,7 +158,7 @@ function acceptCandidateIds(
   const claimedBy = new Map(initialClaims);
 
   for (const candidate of candidates) {
-    // A leftover install of a built-in is stale, not broken: junk already provides it, so the
+    // A leftover install of a built-in is stale, not broken: gunk already provides it, so the
     // copy is skipped without a notice on every start.
     if (shadowedByBuiltIn(candidate, claimedBy)) continue;
     const refusal =

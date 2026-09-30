@@ -22,7 +22,7 @@ import type { ResolvedFileViewLayout } from "../../fileViews/useFileViews";
 interface DiffSectionProps {
   codeHorizontalOffset: number;
   expandedGapKeys: ReadonlySet<string>;
-  /** junk: gaps showing only some of their lines. */
+  /** gunk: gaps showing only some of their lines. */
   revealedGaps?: ReadonlyMap<string, ReviewGapReveal>;
   /** Validated extension marks for this file, in source coordinates. */
   extensionLineHighlights?: readonly ValidatedLineHighlight[];
@@ -60,7 +60,7 @@ interface DiffSectionProps {
   onRowPlanChange?: (rowPlan: DiffSectionRowPlan, highlighted: boolean) => void;
   onSelect: () => void;
   onToggleGap: (gapKey: string) => void;
-  /** junk: reveal more of one gap from one of its ends. */
+  /** gunk: reveal more of one gap from one of its ends. */
   onRevealGap?: (gapKey: string, side: "head" | "tail", lines: number) => void;
 }
 
@@ -127,7 +127,7 @@ function DiffSectionComponent({
             backgroundColor: theme.panel,
           }}
         >
-          {/* junk: blank air only. The band that starts the next file is its header row. */}
+          {/* gunk: blank air only. The band that starts the next file is its header row. */}
           <box
             style={{
               width: "100%",

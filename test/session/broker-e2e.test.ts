@@ -124,7 +124,7 @@ function spawnHunkSession(fixture: FixtureFiles, port: number) {
     env: {
       ...process.env,
       XDG_CONFIG_HOME: testConfigHome,
-      // junk persists viewed marks and notes under XDG_STATE_HOME; keep this session out of the
+      // gunk persists viewed marks and notes under XDG_STATE_HOME; keep this session out of the
       // developer's own state.
       XDG_STATE_HOME: join(fixture.dir, "state"),
       TERM: "xterm-256color",
