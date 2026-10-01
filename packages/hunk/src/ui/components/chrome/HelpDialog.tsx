@@ -27,11 +27,16 @@ export function HelpDialog({
 }) {
   const sections = suppliedSections ? [...suppliedSections] : buildHelpSections(commands ?? []);
 
-  const width = Math.max(1, Math.min(74, Math.max(56, terminalWidth - 8), terminalWidth - 2));
-  const bodyWidth = Math.max(1, width - 4);
   const rows = sections.flatMap((section) => section.rows);
   const longestKeys = Math.max(0, ...rows.map((row) => row.keys.length));
   const longestDescription = Math.max(0, ...rows.map((row) => row.description.length));
+  // gunk: as wide as the longest key and description need, so neither is cut short, down to
+  // the terminal's own width.
+  const width = Math.max(
+    1,
+    Math.min(Math.max(56, longestKeys + 1 + longestDescription + 4), terminalWidth - 2),
+  );
+  const bodyWidth = Math.max(1, width - 4);
   // Key text is user-controlled once bindings are, so the column is measured
   // rather than guessed — but descriptions are given the room they need first,
   // since a truncated key is still recognizable and a truncated sentence is not.

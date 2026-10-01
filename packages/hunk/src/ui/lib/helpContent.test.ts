@@ -80,11 +80,12 @@ describe("buildHelpSections", () => {
         run: () => {},
       },
     ]);
-    const section = sections.find((candidate) => candidate.title === "Extension hunk-viewed");
+    const section = sections.find((candidate) => candidate.title === "Viewed files and search");
     expect(section?.rows).toEqual([
       { keys: "V", description: "Toggle viewed on the selected file" },
     ]);
-    // Bundled UI commands belong to the `hunk` owner and stay in the curated rows.
+    // A built-in extension reads as part of the app; bundled UI commands stay in the curated rows.
+    expect(sections.map((candidate) => candidate.title)).not.toContain("Extension hunk-viewed");
     expect(sections.map((candidate) => candidate.title)).not.toContain("Extension hunk");
   });
 

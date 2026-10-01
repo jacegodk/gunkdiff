@@ -3810,6 +3810,27 @@ describe("UI components", () => {
     expect(frame).not.toContain("Review");
   });
 
+  test("HelpDialog grows to fit its longest row on a wide terminal", async () => {
+    const theme = resolveTheme("github-dark-default", null);
+    const keys = "ctrl+p / shift+f3 / ctrl+shift+f";
+    const description = "next / previous search match (notes when not searching)";
+    const frame = await captureFrame(
+      <HelpDialog
+        sections={[{ title: "Search", rows: [{ keys, description }] }]}
+        terminalHeight={16}
+        terminalWidth={140}
+        theme={theme}
+        onClose={() => {}}
+      />,
+      140,
+      16,
+    );
+
+    expect(frame).toContain(keys);
+    expect(frame).toContain(description);
+    expect(frame).not.toContain("…");
+  });
+
   test("shared help and theme dialogs clamp into narrow terminals", async () => {
     const theme = resolveTheme("github-dark-default", null);
     const help = await captureFrame(

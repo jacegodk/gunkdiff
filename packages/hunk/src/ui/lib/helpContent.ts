@@ -194,6 +194,11 @@ function helpEntryKeys(commands: readonly AppCommand[], spec: HelpEntrySpec): st
   return labels.length > 0 ? labels.join(" / ") : undefined;
 }
 
+/** gunk: headings for the extensions compiled into gunk, which read as part of the app. */
+const BUILT_IN_EXTENSION_HELP_TITLES: Readonly<Record<string, string>> = {
+  "hunk-viewed": "Viewed files and search",
+};
+
 /**
  * gunk: one section per loaded extension, listing every bound command it registered, so the
  * built-in hunk-viewed keys (and any installed extension's) show up in `?` beside hunk's own.
@@ -209,7 +214,7 @@ function extensionHelpSections(commands: readonly AppCommand[]): HelpSection[] {
     byExtension.set(owner, rows);
   }
   return [...byExtension.entries()].map(([owner, rows]) => ({
-    title: `Extension ${owner}`,
+    title: BUILT_IN_EXTENSION_HELP_TITLES[owner] ?? `Extension ${owner}`,
     rows,
   }));
 }
