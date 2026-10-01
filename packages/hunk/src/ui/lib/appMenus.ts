@@ -218,6 +218,7 @@ export function buildAppMenus({
       { commandId: "hunk.search.next", label: "Next match" },
       { commandId: "hunk.search.previous", label: "Previous match" },
       SEPARATOR,
+      { commandId: "hunk.review.findFile", label: "Find file…" },
       { commandId: "hunk.review.focusFilter", label: "Focus filter" },
     ],
     agent: [

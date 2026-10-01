@@ -66,6 +66,7 @@ const HELP_SECTIONS: readonly HelpSectionSpec[] = [
         commandIds: ["hunk.review.previousAnnotatedHunk", "hunk.review.nextAnnotatedHunk"],
         description: "annotated hunk / exact note",
       },
+      { commandIds: ["hunk.review.findFile"], description: "find a file by name" },
       { commandIds: ["hunk.search.find"], description: "search diff content" },
       {
         commandIds: ["hunk.search.next", "hunk.search.previous"],

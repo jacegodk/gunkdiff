@@ -127,6 +127,7 @@ Review and shared commands:
 | `hunk.review.expandAllFiles`                   | Show every file whole                                 | `A`                          |
 | `hunk.review.expandAroundHunk`                 | Show 10 more unchanged lines around the selected hunk | `x`                          |
 | `hunk.review.expandFile`                       | Show the whole selected file                          | `F`                          |
+| `hunk.review.findFile`                         | Find a file by name                                   | `t`                          |
 | `hunk.review.focusFilter`                      | Focus the file filter                                 | _(none)_                     |
 | `hunk.review.halfPageDown`                     | Scroll down half a page                               | `d`, `ctrl+d`                |
 | `hunk.review.halfPageUp`                       | Scroll up half a page                                 | `u`, `ctrl+u`                |
@@ -166,7 +167,7 @@ Review and shared commands:
 | `hunk.view.layoutAuto`                         | Auto layout                                           | `0`                          |
 | `hunk.view.layoutSplit`                        | Split layout                                          | `2`                          |
 | `hunk.view.layoutUnified`                      | Unified layout                                        | `1`                          |
-| `hunk.view.openThemeSelector`                  | Choose theme                                          | `t`                          |
+| `hunk.view.openThemeSelector`                  | Choose theme                                          | `ctrl+t`                     |
 | `hunk.view.toggleAgentNotes`                   | Toggle agent notes                                    | `a`                          |
 | `hunk.view.toggleHandledNotes`                 | Toggle handled notes                                  | `H`                          |
 | `hunk.view.toggleCopyDecorations`              | Toggle copy decorations                               | _(none)_                     |

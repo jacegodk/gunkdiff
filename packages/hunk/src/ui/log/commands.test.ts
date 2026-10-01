@@ -97,7 +97,7 @@ describe("history command authority", () => {
     expect(matchCommand(key("x", "u"))).toBe("hunk.history.halfPageUp");
     expect(matchCommand(key("u", "", true))).toBe("hunk.history.halfPageUp");
     expect(matchCommand(key("c", "\x03", true))).toBe("hunk.app.quit");
-    expect(matchCommand(key("t"))).toBe("hunk.view.openThemeSelector");
+    expect(matchCommand(key("t", "\x14", true))).toBe("hunk.view.openThemeSelector");
     expect(historyCommand("hunk.history.openFirstParent").title).toBe("Compare with first parent");
 
     const { keys } = resolveCommandKeys({
@@ -121,7 +121,7 @@ describe("history command authority", () => {
       keys: "Shift+Up / K",
       description: "extend selection up",
     });
-    expect(helpRows).toContainEqual({ keys: "t", description: "choose theme" });
+    expect(helpRows).toContainEqual({ keys: "Ctrl+T", description: "choose theme" });
   });
 
   test("remaps and unbinds history independently through the shared keymap", () => {

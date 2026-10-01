@@ -333,7 +333,7 @@ const DIALOG_EXTENSION_SOURCE = `export default function (hunk) {
 
 /**
  * A repo-local extension driving the status line: `ctrl+g` asks for a line on the prompt row
- * and reports the answer as a persistent item; `ctrl+t` fills the row with items of different
+ * and reports the answer as a persistent item; `ctrl+o` fills the row with items of different
  * priorities so overflow is visible.
  */
 const STATUS_LINE_EXTENSION_SOURCE = `export default function (hunk) {
@@ -345,7 +345,7 @@ const STATUS_LINE_EXTENSION_SOURCE = `export default function (hunk) {
       priority: 1,
     });
   });
-  hunk.registerCommand({ id: "fill", title: "Fill", key: "ctrl+t" }, (ctx) => {
+  hunk.registerCommand({ id: "fill", title: "Fill", key: "ctrl+o" }, (ctx) => {
     ctx.statusLine.set({ id: "keep", spans: [{ text: "KEEP-ME" }], priority: 5 });
     ctx.statusLine.set({ id: "drop", spans: [{ text: "DROP-ME-FIRST-" + "x".repeat(70) }], priority: 0 });
     ctx.statusLine.set({ id: "right", spans: [{ text: "RIGHT" }], alignment: "right", priority: 3 });
@@ -1413,7 +1413,7 @@ describe("PTY extensions", () => {
       await harness.waitForSnapshot(session, (text) => text.includes("answer=null"), 5_000);
 
       // Overflow: the lowest-priority item is dropped whole, the rest keep their placement.
-      await session.press(["ctrl", "t"]);
+      await session.press(["ctrl", "o"]);
       const filled = await harness.waitForSnapshot(
         session,
         (text) => text.includes("KEEP-ME") && text.includes("RIGHT"),

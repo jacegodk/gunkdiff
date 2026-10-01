@@ -48,6 +48,7 @@ import { MenuBar } from "./components/chrome/MenuBar";
 import { ConfirmDialog, confirmDialogHeight } from "./components/chrome/ConfirmDialog";
 import { ExtensionDialog } from "./components/chrome/ExtensionDialog";
 import { ReviewPickerDialog } from "./components/chrome/ReviewPickerDialog";
+import { FileFinderDialog } from "./components/chrome/FileFinderDialog";
 import { ViewPreferenceQuitDialog } from "./components/chrome/ViewPreferenceQuitDialog";
 import { ExtensionToast } from "./components/chrome/ExtensionToast";
 import { DiffPane, type ReviewSelectionActionsHandle } from "./components/panes/DiffPane";
@@ -85,6 +86,7 @@ import { resolveCanonicalPath } from "../core/run/paths";
 import { useReviewPickerController } from "./hooks/useReviewPickerController";
 import { useSavedReviewNotes } from "./hooks/useSavedReviewNotes";
 import { useThemeSelectorController } from "./hooks/useThemeSelectorController";
+import { useFileFinderController } from "./hooks/useFileFinderController";
 import { reviewPickerApplies } from "./reviewPicker";
 import { useTimedNotice } from "./hooks/useTimedNotice";
 import { useUserNoteComposer } from "./hooks/useUserNoteComposer";
@@ -501,6 +503,20 @@ export function App({
     },
     [review.selectFile],
   );
+
+  const {
+    fileFinderOpen,
+    fileFinderQuery,
+    fileFinderMatches,
+    fileFinderSelectedIndex,
+    acceptFileFinder,
+    acceptFileFinderItem,
+    closeFileFinder,
+    moveFileFinder,
+    openFileFinder,
+    selectFileFinderItem,
+    setFileFinderQuery,
+  } = useFileFinderController({ files: filteredFiles, onJumpToFile: jumpToFile });
 
   const openAgentNotes = useCallback(() => {
     publishViewPreferenceChanges({ showAgentNotes: true });
@@ -1400,6 +1416,7 @@ export function App({
         openReviewPicker: () => {
           openReviewPicker();
         },
+        openFileFinder,
         openThemeSelector,
         requestQuit,
         resolvedKeys: resolvedCommandKeys,
@@ -1553,6 +1570,11 @@ export function App({
     acceptReviewPicker,
     closeReviewPicker,
     reviewPickerOpen,
+    fileFinderOpen,
+    acceptFileFinder,
+    closeFileFinder,
+    moveFileFinder,
+    setFileFinderQuery,
     saveConfigPromptOpen,
     saveViewPreferencesAndQuit,
     discardViewPreferencesAndQuit,
@@ -1964,6 +1986,20 @@ export function App({
           onAcceptItem={acceptReviewPickerItem}
           onClose={closeReviewPicker}
           onSelectItem={selectReviewPickerItem}
+        />
+      ) : null}
+
+      {fileFinderOpen ? (
+        <FileFinderDialog
+          matches={fileFinderMatches}
+          query={fileFinderQuery}
+          selectedIndex={fileFinderSelectedIndex}
+          terminalHeight={terminal.height}
+          terminalWidth={terminal.width}
+          theme={baseTheme}
+          onAcceptItem={acceptFileFinderItem}
+          onClose={closeFileFinder}
+          onSelectItem={selectFileFinderItem}
         />
       ) : null}
 

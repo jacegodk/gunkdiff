@@ -114,7 +114,9 @@ describe("PTY chrome", () => {
 
     try {
       await session.waitForText(REVIEW_MENU_BAR, { timeout: 15_000 });
-      await harness.pressAndWaitForText(session, "t", /Theme selector/, { timeout: 5_000 });
+      await harness.pressAndWaitForText(session, ["ctrl", "t"], /Theme selector/, {
+        timeout: 5_000,
+      });
 
       // OS key repeat arrives as a rapid stream while React/OpenTUI drains each preview render.
       for (let index = 0; index < 100; index += 1) {
@@ -150,7 +152,9 @@ describe("PTY chrome", () => {
     try {
       await session.waitForText(/line60/, { timeout: 15_000 });
 
-      await harness.pressAndWaitForText(session, "t", /Theme selector/, { timeout: 5_000 });
+      await harness.pressAndWaitForText(session, ["ctrl", "t"], /Theme selector/, {
+        timeout: 5_000,
+      });
       await harness.pressAndWaitForText(session, "down", /›\s+github-dark-dimmed/, {
         timeout: 5_000,
       });

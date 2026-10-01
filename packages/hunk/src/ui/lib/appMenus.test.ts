@@ -49,6 +49,7 @@ function createTestCommands(overrides: Partial<BuildAppCommandsOptions> = {}) {
     moveNoteCursor: record("moveNoteCursor"),
     openAgentSkill: record("openAgentSkill"),
     openCommitPicker: noop,
+    openFileFinder: noop,
     openReviewPicker: noop,
     openThemeSelector: noop,
     requestQuit: record("requestQuit"),
@@ -164,7 +165,14 @@ describe("buildAppMenus", () => {
       "Previous annotated file",
     ]);
     // The filter ships unbound, so its Navigate entry carries no hint.
-    expect(items(menus.navigate).map((item) => item.hint)).toEqual(["[", "]", "{", "}", undefined]);
+    expect(items(menus.navigate).map((item) => item.hint)).toEqual([
+      "[",
+      "]",
+      "{",
+      "}",
+      "t",
+      undefined,
+    ]);
   });
 
   test("every item carries the id of the command it runs", () => {
@@ -331,6 +339,7 @@ describe("the Extensions menu", () => {
       ["Search diff content…", "/"],
       ["Next match", "n"],
       ["Previous match", "N"],
+      ["Find file…", "t"],
       ["Focus filter", undefined],
     ]);
   });

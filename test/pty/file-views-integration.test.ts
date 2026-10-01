@@ -299,7 +299,7 @@ describe("PTY file views", () => {
 
       const themeAnchor = firstVisibleSyntaxRow(await session.text({ immediate: true }));
       expect(themeAnchor).toBeDefined();
-      await session.press("t");
+      await session.press(["ctrl", "t"]);
       await session.waitForText(/Theme selector/, { timeout: 5_000 });
       await session.press("down");
       await session.press("enter");

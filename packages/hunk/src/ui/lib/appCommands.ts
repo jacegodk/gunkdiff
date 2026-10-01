@@ -135,6 +135,7 @@ export interface BuildAppCommandsOptions {
   openAgentSkill: () => void;
   /** gunk: open the commit list of whatever the review currently covers. */
   openCommitPicker: () => void;
+  openFileFinder: () => void;
   openReviewPicker: () => void;
   openThemeSelector: () => void;
   requestQuit: () => void;
@@ -293,6 +294,7 @@ function builtinCommandHandlers(
     },
     "hunk.app.openReviewPicker": { run: () => options.openReviewPicker() },
     "hunk.app.openCommitPicker": { run: () => options.openCommitPicker() },
+    "hunk.review.findFile": { run: () => options.openFileFinder() },
     "hunk.view.openThemeSelector": { run: () => options.openThemeSelector() },
     "hunk.view.toggleAgentNotes": { run: () => options.toggleAgentNotes() },
     "hunk.view.toggleHandledNotes": { run: () => options.toggleHandledNotes() },
@@ -397,6 +399,7 @@ const NOOP_COMMAND_OPTIONS: BuildAppCommandsOptions = (() => {
     moveNoteCursor: noop,
     openAgentSkill: noop,
     openCommitPicker: noop,
+    openFileFinder: noop,
     openReviewPicker: noop,
     openThemeSelector: noop,
     requestQuit: noop,

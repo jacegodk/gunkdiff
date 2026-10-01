@@ -301,7 +301,7 @@ test("shares committed themes across history and repeated review surfaces", asyn
   );
   try {
     await setup.renderOnce();
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     await act(async () => setup.mockInput.pressArrow("down"));
     await act(async () => setup.mockInput.pressEnter());
@@ -311,7 +311,7 @@ test("shares committed themes across history and repeated review surfaces", asyn
     await settle(setup);
     expect(requests[0]?.themeId).toBe("github-dark-dimmed");
 
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     await previewTrailingCustomTheme(setup, "github-dark-dimmed");
     expect(setup.captureCharFrame()).toContain("Review only");
@@ -323,7 +323,7 @@ test("shares committed themes across history and repeated review surfaces", asyn
     await act(async () => setup.mockInput.pressKey("q"));
     await settle(setup);
     expect(setup.captureCharFrame()).toContain("Test history");
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     expect(setup.captureCharFrame()).toContain("›  Review only");
     expect(setup.captureCharFrame()).toContain("Review only");
@@ -335,7 +335,7 @@ test("shares committed themes across history and repeated review surfaces", asyn
     await act(async () => setup.mockInput.pressEnter());
     await settle(setup);
     expect(requests[1]?.themeId).toBe("review-only");
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     expect(setup.captureCharFrame()).toContain("›  Review only");
 
@@ -385,7 +385,7 @@ test("seeds the shared catalog from interactive initialization, not static histo
   );
   try {
     await setup.renderOnce();
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
 
     const frame = setup.captureCharFrame();
@@ -615,7 +615,7 @@ test("refuses a nested review that returns independent extension authority", asy
     expect(createReviewRuntime).not.toHaveBeenCalled();
     expect(foreign.registry.eventBusPhase).toBe("closed");
     expect(history.runtime.extensionSession.closing).toBe(false);
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     expect(setup.captureCharFrame()).toContain("History only");
     expect(setup.captureCharFrame()).not.toContain("Review only");
@@ -721,7 +721,7 @@ test("blocks reopening until dirty-quit cancellation settles", async () => {
   );
   try {
     await setup.renderOnce();
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     expect(setup.captureCharFrame()).toContain("Theme selector");
     await act(async () => setup.mockInput.pressArrow("down"));
@@ -780,7 +780,7 @@ test("preserves the original exit status while a saved-preferences quit is delay
   );
   try {
     await setup.renderOnce();
-    await act(async () => setup.mockInput.typeText("t"));
+    await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
     await setup.renderOnce();
     await act(async () => setup.mockInput.pressArrow("down"));
     await setup.renderOnce();

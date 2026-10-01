@@ -234,7 +234,7 @@ describe("PTY key routing", () => {
 
       const selectorOpen = await harness.pressAndWaitForSnapshot(
         session,
-        "t",
+        ["ctrl", "t"],
         (text) => text.includes("Theme selector"),
         5_000,
       );

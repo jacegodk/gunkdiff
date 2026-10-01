@@ -34,6 +34,12 @@ export interface UseAppKeyboardShortcutsOptions {
   closeThemeSelector: () => void;
   moveReviewPicker: (delta: number) => void;
   reviewPickerOpen: boolean;
+  /** gunk: the `t` file finder, a modal list with a typed query. */
+  fileFinderOpen: boolean;
+  acceptFileFinder: () => void;
+  closeFileFinder: () => void;
+  moveFileFinder: (delta: number) => void;
+  setFileFinderQuery: (update: (query: string) => string) => void;
   closeExtensionTrustPrompt: () => void;
   /**
    * Every app-level shortcut, built-in and extension-contributed, in dispatch
@@ -137,6 +143,11 @@ export function useAppKeyboardShortcuts({
   acceptReviewPicker,
   closeReviewPicker,
   reviewPickerOpen,
+  fileFinderOpen,
+  acceptFileFinder,
+  closeFileFinder,
+  moveFileFinder,
+  setFileFinderQuery,
   saveConfigPromptOpen,
   saveViewPreferencesAndQuit,
   discardViewPreferencesAndQuit,
@@ -160,6 +171,7 @@ export function useAppKeyboardShortcuts({
   const saveConfigPromptOpenRef = useRef(saveConfigPromptOpen);
   const themeSelectorOpenRef = useRef(themeSelectorOpen);
   const reviewPickerOpenRef = useRef(reviewPickerOpen);
+  const fileFinderOpenRef = useRef(fileFinderOpen);
   const extensionTrustPromptOpenRef = useRef(extensionTrustPromptOpen);
   const extensionDialogRef = useRef(extensionDialog);
   // The mode callbacks read live App state (which mode is running, its context),
@@ -186,6 +198,7 @@ export function useAppKeyboardShortcuts({
   saveConfigPromptOpenRef.current = saveConfigPromptOpen;
   themeSelectorOpenRef.current = themeSelectorOpen;
   reviewPickerOpenRef.current = reviewPickerOpen;
+  fileFinderOpenRef.current = fileFinderOpen;
   extensionTrustPromptOpenRef.current = extensionTrustPromptOpen;
   extensionDialogRef.current = extensionDialog;
   isFileViewModeActiveRef.current = isFileViewModeActive;
@@ -458,6 +471,38 @@ export function useAppKeyboardShortcuts({
   };
 
   /**
+   * gunk: own every key while the file finder is up. Arrows and Tab move the highlight, Enter
+   * jumps, Esc closes, Backspace edits, and any other printable key types into the query, so
+   * letters such as `j` or `t` never reach the review behind it.
+   */
+  const handleFileFinderShortcut = (key: KeyEvent): KeyOwner => {
+    if (!fileFinderOpenRef.current) {
+      return "notMine";
+    }
+
+    if (isEscapeKey(key)) {
+      closeFileFinder();
+    } else if (key.name === "up" || (key.name === "tab" && key.shift)) {
+      moveFileFinder(-1);
+    } else if (key.name === "down" || key.name === "tab") {
+      moveFileFinder(1);
+    } else if (key.name === "return" || key.name === "enter") {
+      acceptFileFinder();
+    } else if (key.name === "backspace") {
+      setFileFinderQuery((query) => query.slice(0, -1));
+    } else if (
+      !key.ctrl &&
+      !key.meta &&
+      key.sequence.length === 1 &&
+      key.sequence >= " " &&
+      key.sequence !== "\x7f"
+    ) {
+      setFileFinderQuery((query) => query + key.sequence);
+    }
+    return "mine";
+  };
+
+  /**
    * Navigate an open dropdown menu.
    *
    * Deliberately not fully modal: the final `"notMine"` is load-bearing. Menu
@@ -650,6 +695,7 @@ export function useAppKeyboardShortcuts({
         handleDialogShortcut,
         handleThemeSelectorShortcut,
         handleReviewPickerShortcut,
+        handleFileFinderShortcut,
         handleMenuShortcut,
       ],
       key,

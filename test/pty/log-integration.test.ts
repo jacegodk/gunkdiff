@@ -436,7 +436,9 @@ describe("interactive hunk log", () => {
 
     try {
       await session.waitForText(/Second history commit/, { timeout: 15_000 });
-      await harness.pressAndWaitForText(session, "t", /Theme selector/, { timeout: 5_000 });
+      await harness.pressAndWaitForText(session, ["ctrl", "t"], /Theme selector/, {
+        timeout: 5_000,
+      });
       await session.press("down");
       await session.press("enter");
       const prompt = await harness.pressAndWaitForText(session, "q", /Save view preferences\?/, {
@@ -531,7 +533,7 @@ describe("interactive hunk log", () => {
       expect(wide).not.toContain("Responsive description");
       expect(rightmostColumnOf(wide, displayId)).toBeGreaterThan(95);
 
-      session.writeRaw("t");
+      session.writeRaw("\x14");
       await session.waitForText(/Theme selector/, { timeout: 5_000 });
       await harness.pressAndWaitForText(session, "escape", /Commits on Sep 6, 2026/, {
         timeout: 5_000,

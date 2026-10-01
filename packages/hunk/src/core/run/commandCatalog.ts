@@ -489,10 +489,21 @@ const BUILTIN_COMMANDS = [
     closesMenu: true,
   },
   {
+    // gunk: GitLab's `t`, a file finder that jumps the review stream to the chosen file.
+    id: "hunk.review.findFile",
+    title: "Find a file by name",
+    category: "review",
+    defaultKeys: ["t"],
+    locus: "client-local",
+    publicToExtensions: true,
+    closesMenu: true,
+  },
+  {
     id: "hunk.view.openThemeSelector",
     title: "Choose theme",
     category: "view",
-    defaultKeys: ["t"],
+    // gunk: `t` finds files, as in GitLab.
+    defaultKeys: ["ctrl+t"],
     locus: "client-local",
     publicToExtensions: true,
     closesMenu: true,

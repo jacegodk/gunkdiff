@@ -169,7 +169,7 @@ describe("UI key routing with a focused scroll box", () => {
       const scrollTopBefore = scrollBox.scrollTop;
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       const selectorFrame = await waitForFrame(
         setup,

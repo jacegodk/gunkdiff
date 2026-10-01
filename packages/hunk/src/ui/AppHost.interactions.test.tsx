@@ -555,7 +555,7 @@ async function openThemesModalFromViewMenu(setup: Awaited<ReturnType<typeof test
   await flush(setup);
 
   await act(async () => {
-    await setup.mockInput.typeText("t");
+    await setup.mockInput.pressKey("t", { ctrl: true });
   });
 
   return waitForFrame(setup, (frame) => frame.includes("Theme selector"), 12);
@@ -887,7 +887,7 @@ describe("App interactions", () => {
       await flush(setup);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       let frame = await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
       expect(frame).toContain("›  github-dark-default");
@@ -935,7 +935,7 @@ describe("App interactions", () => {
       await flush(setup);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       let frame = await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
       expect(frame).toContain("›  github-dark-default");
@@ -990,7 +990,7 @@ describe("App interactions", () => {
       await flush(setup);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       const frame = await waitForFrame(setup, (nextFrame) =>
         nextFrame.includes("›  github-dark-default"),
@@ -1037,7 +1037,7 @@ describe("App interactions", () => {
       await flush(setup);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       let frame = await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
       expect(frame).toContain("›  dracula");
@@ -1056,7 +1056,7 @@ describe("App interactions", () => {
       expect(frame).not.toContain("Theme selector");
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       frame = await waitForFrame(setup, (nextFrame) => nextFrame.includes("›  dracula-soft"));
       expect(frame).toContain("active");
@@ -1088,7 +1088,7 @@ describe("App interactions", () => {
       await flush(setup);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("›  github-dark-default"));
 
@@ -1104,7 +1104,7 @@ describe("App interactions", () => {
       await waitForFrame(setup, (nextFrame) => !nextFrame.includes("Theme selector"));
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       const frame = await waitForFrame(setup, (nextFrame) =>
         nextFrame.includes("›  github-dark-default"),
@@ -1172,7 +1172,7 @@ describe("App interactions", () => {
       expect(themeEvents).toEqual([]);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (frame) => frame.includes("Theme selector"));
       await act(async () => {
@@ -1196,7 +1196,7 @@ describe("App interactions", () => {
       expect(themeEvents).toEqual([]);
 
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (frame) => frame.includes("Theme selector"));
       await act(async () => {
@@ -3782,7 +3782,7 @@ describe("App interactions", () => {
     try {
       await flush(setup);
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
 
@@ -3845,7 +3845,7 @@ describe("App interactions", () => {
     try {
       await flush(setup);
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
 
@@ -3901,7 +3901,7 @@ describe("App interactions", () => {
     try {
       await flush(setup);
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
 
@@ -3968,7 +3968,7 @@ describe("App interactions", () => {
     try {
       await flush(setup);
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
 
@@ -4034,7 +4034,7 @@ describe("App interactions", () => {
     try {
       await flush(setup);
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await waitForFrame(setup, (nextFrame) => nextFrame.includes("Theme selector"));
 

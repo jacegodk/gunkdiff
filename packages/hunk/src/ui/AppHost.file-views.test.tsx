@@ -484,7 +484,7 @@ describe("AppHost file views", () => {
       expect(metrics.__hunkPhase9SyntaxLayouts).toBe(1);
       expect(sourceFetcher.calls).toEqual(["new"]);
 
-      await act(async () => setup.mockInput.typeText("t"));
+      await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
       await waitForFrame(setup, (frame) => frame.includes("Theme selector"));
       await act(async () => {
         await setup.mockInput.pressArrow("down");
@@ -581,7 +581,7 @@ describe("AppHost file views", () => {
         capturedRowIndex(setup, "const phase9Line2 = 2;"),
       ];
 
-      await act(async () => setup.mockInput.typeText("t"));
+      await act(async () => setup.mockInput.pressKey("t", { ctrl: true }));
       await waitForFrame(setup, (frame) => frame.includes("Theme selector"));
       await act(async () => {
         await setup.mockInput.pressArrow("down");

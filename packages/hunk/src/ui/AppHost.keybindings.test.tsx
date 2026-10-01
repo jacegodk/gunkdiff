@@ -229,7 +229,7 @@ describe("user keybindings", () => {
 
     await withAppHost(bootstrap, async (setup) => {
       await act(async () => {
-        await setup.mockInput.typeText("t");
+        await setup.mockInput.pressKey("t", { ctrl: true });
       });
       await flush(setup);
       expect(setup.captureCharFrame()).toContain("Theme selector");
