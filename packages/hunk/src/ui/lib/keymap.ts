@@ -342,10 +342,13 @@ export function formatKeyChord(chord: string): string {
     parsed.ctrl ? "Ctrl" : undefined,
     parsed.meta ? "Cmd" : undefined,
     parsed.option ? "Alt" : undefined,
-    // A shifted letter reads as its uppercase form, the way it is typed and
+    // A shifted letter alone reads as its uppercase form, the way it is typed and
     // the way the chord grammar spells it; every other shifted key names the
-    // modifier instead.
-    parsed.shift && !isLetter ? "Shift" : undefined,
+    // modifier instead. gunk: so does a letter under another modifier, since
+    // "Ctrl+P" cannot otherwise tell ctrl+shift+p from ctrl+p.
+    parsed.shift && (!isLetter || parsed.ctrl || parsed.meta || parsed.option)
+      ? "Shift"
+      : undefined,
   ].filter((modifier): modifier is string => modifier !== undefined);
   // A bare letter is shown exactly as typed ("q"); combined with a modifier it
   // reads as a named key would ("Ctrl+M"), which is how keyboards label them.

@@ -223,6 +223,13 @@ describe("formatKeyChord", () => {
     expect(formatKeyChord("{")).toBe("{");
   });
 
+  test("a shifted letter under another modifier names Shift, so it differs from the plain chord", () => {
+    expect(formatKeyChord("ctrl+shift+p")).toBe("Ctrl+Shift+P");
+    expect(formatKeyChord("ctrl+p")).toBe("Ctrl+P");
+    expect(formatKeyChord("ctrl+alt+shift+v")).toBe("Ctrl+Alt+Shift+V");
+    expect(formatKeyChord("shift+p")).toBe("P");
+  });
+
   test("an unparsable chord is shown as written", () => {
     expect(formatKeyChord("ctlr+s")).toBe("ctlr+s");
   });
