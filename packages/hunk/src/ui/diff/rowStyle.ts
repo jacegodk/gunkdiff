@@ -73,6 +73,14 @@ export function neutralRailColor(theme: AppTheme) {
   return theme.lineNumberFg;
 }
 
+/**
+ * gunk: the selected hunk's rail, in the theme's text color (white on a dark theme) so the
+ * selection stands out from the green and red of the other hunks' rails.
+ */
+export function selectedRailColor(theme: AppTheme) {
+  return theme.text;
+}
+
 /** Dim a rail color for inactive hunks by blending toward the panel background. */
 export function dimRailColor(color: string, theme: AppTheme) {
   return blendHex(color, theme.panel, INACTIVE_RAIL_BLEND);

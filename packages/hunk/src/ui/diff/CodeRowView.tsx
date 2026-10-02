@@ -16,6 +16,7 @@ import {
   cursorLineHighlightBg,
   diffRailMarker,
   selectionHighlightBg,
+  selectedRailColor,
   splitLeftRailColor,
   splitRightRailColor,
   unifiedRailColor,
@@ -207,12 +208,12 @@ export function CodeRowView({
     const addBadgeWidth = splitLayout.addNoteBadgeWidth;
     const leftPrefix = {
       text: diffRailMarker(),
-      fg: splitLeftRailColor(row.left.kind, theme, selected),
+      fg: selected ? selectedRailColor(theme) : splitLeftRailColor(row.left.kind, theme, false),
       bg: theme.panel,
     };
     const rightPrefix = {
       text: "▌",
-      fg: splitRightRailColor(row.right.kind, theme, selected),
+      fg: selected ? selectedRailColor(theme) : splitRightRailColor(row.right.kind, theme, false),
       bg: theme.panel,
     };
 
@@ -334,7 +335,7 @@ export function CodeRowView({
   const addBadgeWidth = unifiedLayout.addNoteBadgeWidth;
   const prefix = {
     text: diffRailMarker(),
-    fg: unifiedRailColor(row.cell.kind, theme, selected),
+    fg: selected ? selectedRailColor(theme) : unifiedRailColor(row.cell.kind, theme, false),
     bg: theme.panel,
   };
 

@@ -6,7 +6,7 @@ import { CODE_ROW_ADD_NOTE_BADGE_TEXT } from "./codeRowAffordance";
 import type { PlannedDiffMetaReviewRow } from "./reviewRenderPlan";
 import { fitText } from "./plannedRowText";
 import { measureTextWidth } from "../lib/text";
-import { diffRailMarker, dimRailColor, neutralRailColor } from "./rowStyle";
+import { diffRailMarker, dimRailColor, neutralRailColor, selectedRailColor } from "./rowStyle";
 import { markNestedRowMouseAction } from "./rowMouseActions";
 
 export interface DiffMetaRowViewProps {
@@ -119,7 +119,7 @@ export function DiffMetaRowView({
       >
         <text>
           <span
-            fg={selected ? neutralRailColor(theme) : dimRailColor(neutralRailColor(theme), theme)}
+            fg={selected ? selectedRailColor(theme) : dimRailColor(neutralRailColor(theme), theme)}
             bg={theme.panelAlt}
           >
             {diffRailMarker()}
@@ -150,7 +150,7 @@ export function DiffMetaRowView({
       <box style={{ width: labelBoxWidth, height: 1 }} onMouseUp={handleCollapsedClick}>
         <text>
           <span
-            fg={selected ? neutralRailColor(theme) : dimRailColor(neutralRailColor(theme), theme)}
+            fg={selected ? selectedRailColor(theme) : dimRailColor(neutralRailColor(theme), theme)}
             bg={theme.panelAlt}
           >
             {diffRailMarker()}

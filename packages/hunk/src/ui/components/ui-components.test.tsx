@@ -869,6 +869,50 @@ describe("UI components", () => {
     expect(normalize(shownFrame)).toEqual(normalize(hiddenFrame));
   });
 
+  test("DiffRowView draws the selected hunk's rail in the text color, others in the dimmed kind color", async () => {
+    const theme = resolveTheme("github-dark-default", null);
+    const railColor = async (selected: boolean) => {
+      const setup = await testRender(
+        <RawDiffRowView
+          row={{
+            type: "unified-line",
+            key: `alpha:line:rail-${selected}`,
+            fileId: "alpha",
+            hunkIndex: 0,
+            cell: { kind: "addition", sign: "+", newLineNumber: 2, spans: [{ text: "railrow" }] },
+          }}
+          width={32}
+          lineNumberDigits={1}
+          showLineNumbers={true}
+          showHunkHeaders={true}
+          wrapLines={false}
+          codeHorizontalOffset={0}
+          theme={theme}
+          selected={selected}
+          onStartUserNoteAtHunk={() => {}}
+        />,
+        { width: 32, height: 3 },
+      );
+      try {
+        await act(async () => {
+          await setup.renderOnce();
+        });
+        const rail = setup
+          .captureSpans()
+          .lines.flatMap((line) => line.spans)
+          .find((span) => span.text.startsWith("▌"));
+        return capturedTestColorToHex(rail?.fg)?.toLowerCase();
+      } finally {
+        await act(async () => {
+          setup.renderer.destroy();
+        });
+      }
+    };
+
+    expect(await railColor(true)).toBe(theme.text.toLowerCase());
+    expect(await railColor(false)).not.toBe(theme.text.toLowerCase());
+  });
+
   test("DiffRowView fills the reserved wrapped add-note column with row background", async () => {
     const theme = resolveTheme("github-dark-default", null);
     const setup = await testRender(
