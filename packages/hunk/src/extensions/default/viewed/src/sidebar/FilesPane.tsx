@@ -9,7 +9,7 @@ import type { ScrollBoxRenderable } from "@opentui/core";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { ExtensionPaneProps } from "../../../../../extension-api";
 import { useReviewMirror } from "../reviewMirror";
-import { setSingleFilePending, useSingleFileState } from "../singleFile";
+import { retargetFromPane, setSingleFilePending, useSingleFileState } from "../singleFile";
 import { isViewed, useViewedState } from "../viewedStore";
 import {
   buildFlatSidebarEntries,
@@ -97,7 +97,7 @@ export function FilesPane({
     scrollRef.current?.scrollChildIntoView(fileRowId(highlightedId));
   }, [listFiles, mode, highlightedId, entries]);
 
-  /** Route a row click: normal selection, or record a pending single-file target. */
+  /** Route a row click: normal selection, or switch the single-file view to the clicked file. */
   const onSelectFile = (fileId: string) => {
     if (!single.active) {
       actions.selectFile(fileId);
@@ -105,6 +105,8 @@ export function FilesPane({
     }
     const file = listFiles.find((entry) => entry.id === fileId);
     if (!file) return;
+    // gunk: a click switches at once; Enter on a pending file stays as the fallback.
+    if (retargetFromPane(file.path)) return;
     setSingleFilePending(file.path);
     actions.notify(`Enter loads ${basename(file.path)}`, "info");
   };

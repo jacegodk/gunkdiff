@@ -92,8 +92,53 @@ export function neighborPath(
   return files[next]?.path ?? null;
 }
 
+/**
+ * gunk: paths matching `query` for the single-file `t` finder, best first. Mirrors the host
+ * finder's ranking in `ui/fileFinder.ts` (this extension imports only the extension API): a match
+ * in the file name beats one in the path, a contiguous match beats scattered letters, and among
+ * equals the shorter path wins.
+ */
+export function findFilePaths(files: readonly { path: string }[], query: string): string[] {
+  const needle = query.trim().toLowerCase();
+  const rank = (path: string): number | null => {
+    const haystack = path.toLowerCase();
+    if (haystack.slice(haystack.lastIndexOf("/") + 1).includes(needle)) return 0;
+    if (haystack.includes(needle)) return 1;
+    let from = 0;
+    for (const char of needle) {
+      const found = haystack.indexOf(char, from);
+      if (found === -1) return null;
+      from = found + 1;
+    }
+    return 2;
+  };
+  return files
+    .flatMap((file) => {
+      const fileRank = rank(file.path);
+      return fileRank === null ? [] : [{ path: file.path, rank: fileRank }];
+    })
+    .sort((a, b) => a.rank - b.rank || a.path.length - b.path.length)
+    .map(({ path }) => path);
+}
+
+/** gunk: how a pane click switches the single-file view; set by the extension at startup. */
+let paneRetarget: ((path: string) => void) | null = null;
+
+/** gunk: install the pane-click retarget; null removes it. */
+export function setSingleFilePaneRetarget(retarget: ((path: string) => void) | null): void {
+  paneRetarget = retarget;
+}
+
+/** gunk: switch the single-file view to `path` from a pane click; false when nothing can. */
+export function retargetFromPane(path: string): boolean {
+  if (!paneRetarget) return false;
+  paneRetarget(path);
+  return true;
+}
+
 /** Reset module state between tests. */
 export function resetSingleFileForTests(): void {
   state = initial;
   listeners.clear();
+  paneRetarget = null;
 }

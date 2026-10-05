@@ -1352,7 +1352,7 @@ describe("search", () => {
     expect(getSearchState().currentIndex).toBe(0);
   });
 
-  test("entering single-file mode restricts the hit count to the shown file; leaving it restores the rest", () => {
+  test("a search in single-file mode still counts every file of the review", () => {
     const fake = createFakeHunk();
     registerExtension(fake.hunk);
     const files = [
@@ -1365,7 +1365,9 @@ describe("search", () => {
     expect(getSearchState().hits.map((h) => h.fileId)).toEqual(["1", "2"]);
 
     enterSingleFile("a.ts");
-    // A single-file-mode reload's changeset only ever carries the one target file.
+    // The host runs the transform on the full changeset before every load; it records every file
+    // and keeps only the target, so a single-file-mode reload's changeset carries one file.
+    expect(fake.transforms[0]!(makeChangeset(files)).files).toEqual([files[0]!]);
     const ctx = eventContext(repoDir);
     fake.events.get("changeset_loaded")!({ changeset: makeChangeset([files[0]!]) }, ctx);
     fake.events.get("session_reload")!(
@@ -1373,7 +1375,8 @@ describe("search", () => {
       ctx,
     );
 
-    expect(getSearchState().hits.map((h) => h.fileId)).toEqual(["1"]);
+    // gunk: the review still has both files, so the search answers for both.
+    expect(getSearchState().hits.map((h) => h.fileId)).toEqual(["1", "2"]);
 
     // Leaving the mode reloads the full changeset again.
     fake.keyboardModes.get("single")!.onExit!(modeContext(createCalls()));

@@ -5,10 +5,13 @@ import {
   clearSingleFileReturn,
   enterSingleFile,
   exitSingleFile,
+  findFilePaths,
   getSingleFileState,
   neighborPath,
   resetSingleFileForTests,
+  retargetFromPane,
   setSingleFilePending,
+  setSingleFilePaneRetarget,
   setSingleFileTarget,
   subscribeSingleFile,
 } from "./singleFile";
@@ -120,5 +123,30 @@ describe("neighborPath", () => {
     expect(neighborPath(files, null, 1)).toBe("a.ts");
     expect(neighborPath(files, "missing", -1)).toBe("c.ts");
     expect(neighborPath([], null, 1)).toBeNull();
+  });
+});
+
+describe("findFilePaths", () => {
+  const files = [
+    { path: "src/app.ts" },
+    { path: "docs/help.md" },
+    { path: "src/ui/HelpDialog.tsx" },
+  ];
+
+  test("ranks a file-name match first, then by path length, and drops non-matches", () => {
+    expect(findFilePaths(files, "help")).toEqual(["docs/help.md", "src/ui/HelpDialog.tsx"]);
+    expect(findFilePaths(files, "HlpDlg")).toEqual(["src/ui/HelpDialog.tsx"]);
+    expect(findFilePaths(files, "zzz")).toEqual([]);
+  });
+});
+
+describe("retargetFromPane", () => {
+  test("hands the clicked path to the installed retarget, and reports when none is installed", () => {
+    resetSingleFileForTests();
+    expect(retargetFromPane("a.ts")).toBe(false);
+    const seen: string[] = [];
+    setSingleFilePaneRetarget((path) => seen.push(path));
+    expect(retargetFromPane("b.ts")).toBe(true);
+    expect(seen).toEqual(["b.ts"]);
   });
 });

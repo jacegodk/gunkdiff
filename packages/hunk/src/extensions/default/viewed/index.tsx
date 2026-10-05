@@ -6,8 +6,10 @@
  * unlimited context. `J` / `K` move to the next/previous file, walking every visible file in
  * every mode; viewed files are never skipped. `U` jumps to the next unviewed file, retargeting
  * instead of selecting while single-file mode is active. `o` toggles single-file mode, which shows only
- * one file at a time; inside it `,`/`.` retarget the previous/next file and `Enter` loads a file
- * clicked in the pane, with `J`/`K` retargeting instead of jumping the full review. Marks
+ * one file at a time; inside it `,`/`.` retarget the previous/next file, a click in the pane
+ * switches to that file, `t` finds any file of the review by name, and `J`/`K` retarget instead
+ * of jumping the full review. A search started there keeps the mode, scans every file, and
+ * switches the view to a hit in another file; Esc ends the search first, then the mode. Marks
  * persist per repo in the XDG state dir and reset when a file's patch changes. The pane replaces
  * hunk's files pane and shows marks and progress.
  *
@@ -25,7 +27,10 @@ import type {
   ExtensionCommandContext,
   ExtensionContext,
   ExtensionDiffFile,
+  ExtensionEventContext,
   ExtensionKeyEvent,
+  ExtensionKeyboardModeContext,
+  ExtensionKeyboardModeKeyResult,
   ExtensionLineHighlight,
   HunkExtensionAPI,
 } from "../../../extension-api";
@@ -63,8 +68,10 @@ import {
   clearSingleFileReturn,
   enterSingleFile,
   exitSingleFile,
+  findFilePaths,
   getSingleFileState,
   neighborPath,
+  setSingleFilePaneRetarget,
   setSingleFileTarget,
 } from "./src/singleFile";
 import { FilesPane } from "./src/sidebar/FilesPane";
@@ -92,6 +99,22 @@ const SEARCH_PROMPT_MODE_ID = "search-prompt";
 const SEARCH_ACTIVE_MODE_ID = "search-active";
 /** The command context the active search was started from; its controls clear it on Esc. */
 let searchCtx: ExtensionCommandContext | null = null;
+/**
+ * gunk: a search started in single-file mode replaces that keyboard mode for its duration. This
+ * flag tells the mode's exit to keep the single-file view, and the search's end to return to it.
+ */
+let singleSuspendedForSearch = false;
+/** gunk: set while the mode is re-entered after a search, so its entry skips the reload. */
+let resumingSingle = false;
+/**
+ * gunk: the context of the latest lifecycle event. Its navigation, dialogs and reload controls
+ * stay valid until the next reload hands over a fresh one, so work that outlives a reload (a
+ * search hit in another file, a pane click, the single-file `t` finder) reaches the review
+ * through it.
+ */
+let liveReviewCtx: ExtensionEventContext | null = null;
+/** gunk: set once a search hit switched the single-file view, which expires the search's command. */
+let searchOutlivedItsReview = false;
 const SEARCH_HIGHLIGHTER_ID = "search";
 /** Hunk rejects a highlighter's whole mark set for a file above this; keep well under it. */
 const MAX_MARKS_PER_FILE = 2000;
@@ -113,10 +136,19 @@ function viewedFileIds(files: readonly ExtensionDiffFile[]): Set<string> {
   return new Set(files.filter((file) => isViewed(viewed, file)).map((file) => file.id));
 }
 
-/** Rebuild the merged hit list from the currently visible files, excluding viewed ones. */
+/**
+ * gunk: the files a search scans: the visible files, or every file of the review while
+ * single-file mode shows only one of them.
+ */
+function searchFiles(): ExtensionDiffFile[] {
+  const mirror = getReviewMirror();
+  return getSingleFileState().active ? [...mirror.allFiles] : visibleFiles(mirror);
+}
+
+/** Rebuild the merged hit list from the searched files, excluding viewed ones. */
 function rebuildVisibleHits(): void {
-  const visible = visibleFiles(getReviewMirror());
-  rebuildHits(visible, { excludeFileIds: viewedFileIds(visible) });
+  const files = searchFiles();
+  rebuildHits(files, { excludeFileIds: viewedFileIds(files) });
 }
 
 /** Rebuild the merged hit list from the currently visible files, only while a search is active. */
@@ -135,7 +167,7 @@ let promptResolve: ((value: string | null) => void) | null = null;
  * readable source (binary, too large, a piped patch) keeps its patch as the thing scanned.
  */
 async function loadSearchDocuments(ctx: ExtensionCommandContext): Promise<void> {
-  const visible = visibleFiles(getReviewMirror());
+  const visible = searchFiles();
   const skip = viewedFileIds(visible);
   for (const file of visible) {
     if (skip.has(file.id) || hasSearchDocument(file)) continue;
@@ -166,12 +198,35 @@ async function applySearch(ctx: ExtensionCommandContext, query: string): Promise
   }
 }
 
+/**
+ * gunk: return to single-file mode once a search started there is over. A no-op when the search
+ * did not suspend the mode, or when the mode was left meanwhile.
+ */
+function resumeSingleAfterSearch(ctx: Pick<ExtensionCommandContext, "keyboardModes">): void {
+  if (!singleSuspendedForSearch) return;
+  singleSuspendedForSearch = false;
+  if (!getSingleFileState().active) return;
+  resumingSingle = true;
+  try {
+    ctx.keyboardModes.enterMode(SINGLE_MODE_ID);
+  } finally {
+    resumingSingle = false;
+  }
+}
+
 /** Clear the active search, its highlights, its bottom-bar pane, and the mode that Esc exits. */
-function applyClear(ctx: ExtensionCommandContext): void {
+function applyClear(
+  ctx: ExtensionCommandContext,
+  highlights: ExtensionCommandContext["highlights"] = ctx.highlights,
+): void {
   clearSearch();
   searchCtx = null;
-  ctx.highlights.refresh(SEARCH_HIGHLIGHTER_ID);
-  ctx.panes.close(SEARCH_PANE_ID);
+  highlights.refresh(SEARCH_HIGHLIGHTER_ID);
+  // gunk: a search that switched the single-file view outlived its command's review; the
+  // latest reload's panes are the current ones.
+  const panes = searchOutlivedItsReview ? (liveReviewCtx?.panes ?? ctx.panes) : ctx.panes;
+  searchOutlivedItsReview = false;
+  panes.close(SEARCH_PANE_ID);
   if (ctx.keyboardModes.isActive(SEARCH_ACTIVE_MODE_ID)) ctx.keyboardModes.exitMode();
 }
 
@@ -182,11 +237,28 @@ function applyClear(ctx: ExtensionCommandContext): void {
  * hiding; showing the file whole is what makes that line exist on screen.
  */
 async function revealHit(ctx: ExtensionCommandContext, hit: SearchHit): Promise<void> {
+  let fileId = hit.fileId;
+  let navigation = ctx.navigation;
+  // gunk: in single-file mode a hit in another file switches the view to that file first.
+  const single = getSingleFileState();
+  if (single.active && hit.filePath !== single.targetPath) {
+    setSingleFileTarget(hit.filePath);
+    searchOutlivedItsReview = true;
+    if (!ctx.commands.execute("hunk.app.refresh")) {
+      ctx.notify("This input cannot be reloaded, so the hit cannot be shown", "warning");
+      return;
+    }
+    const shown = () => getReviewMirror().files.find((file) => file.path === hit.filePath);
+    if (!(await waitFor(() => shown() !== undefined, 120))) return;
+    fileId = shown()!.id;
+    // The command's navigation expired with the reload; the reload's own context is current.
+    navigation = liveReviewCtx?.navigation ?? navigation;
+  }
   if (hit.hidden) {
-    ctx.navigation.selectFile(hit.fileId);
+    navigation.selectFile(fileId);
     await ctx.commands.execute("hunk.review.expandFile");
   }
-  ctx.navigation.revealLine(hit.fileId, hit.side, hit.line);
+  navigation.revealLine(fileId, hit.side, hit.line);
 }
 
 /**
@@ -231,10 +303,12 @@ async function runPrompt(ctx: ExtensionCommandContext, initial: string): Promise
     promptResolve = null;
   }
   ctx.panes.open(SEARCH_PANE_ID);
+  if (ctx.keyboardModes.isActive(SINGLE_MODE_ID)) singleSuspendedForSearch = true;
   if (!ctx.keyboardModes.enterMode(SEARCH_PROMPT_MODE_ID)) {
     closePrompt();
     ctx.panes.close(SEARCH_PANE_ID);
     ctx.notify("Could not open the search prompt", "warning");
+    resumeSingleAfterSearch(ctx);
     return;
   }
   openPrompt(initial);
@@ -243,10 +317,12 @@ async function runPrompt(ctx: ExtensionCommandContext, initial: string): Promise
   });
   if (value === null) {
     if (getSearchState().query === "") ctx.panes.close(SEARCH_PANE_ID);
+    resumeSingleAfterSearch(ctx);
     return;
   }
   if (value === "") {
     applyClear(ctx);
+    resumeSingleAfterSearch(ctx);
     return;
   }
   await applySearch(ctx, value);
@@ -255,6 +331,10 @@ async function runPrompt(ctx: ExtensionCommandContext, initial: string): Promise
 /** Register the hunk-viewed pane, commands, keyboard mode, and event handlers. */
 export default function (hunk: HunkExtensionAPI) {
   const stateFilePath = resolveViewedFilePath(process.env, process.platform, homedir());
+  // A fresh registration (a new session, or a test) starts with no review to reach.
+  liveReviewCtx = null;
+  singleSuspendedForSearch = false;
+  searchOutlivedItsReview = false;
   let saveFailureNotified = false;
 
   /**
@@ -316,21 +396,62 @@ export default function (hunk: HunkExtensionAPI) {
     projectedByPath = new Map(files.map((file) => [file.path, file]));
   }
 
-  hunk.on("startup", ({ cwd }, ctx) => ensureRepoLoaded(cwd, ctx.notify));
+  /** gunk: switch the single-file view to `path` outside a command (pane click, `t` finder). */
+  function retargetLive(path: string) {
+    setSingleFileTarget(path);
+    const ctx = liveReviewCtx;
+    if (!ctx) return;
+    void ctx.review.requestReload().then((result) => {
+      if (!result.ok) ctx.notify(`Could not switch file: ${result.detail}`, "warning");
+    });
+  }
+  setSingleFilePaneRetarget(retargetLive);
+
+  /** gunk: `t` in single-file mode: name any file of the review and switch the view to it. */
+  async function findFileInSingle() {
+    const ctx = liveReviewCtx;
+    if (!ctx) return;
+    const query = await ctx.dialogs.input({ title: "Find a file", placeholder: "part of a path" });
+    if (!query?.trim()) return;
+    const paths = findFilePaths(getReviewMirror().allFiles, query);
+    if (paths.length === 0) {
+      ctx.notify(`No file matches "${query.trim()}"`, "info");
+      return;
+    }
+    const path =
+      paths.length === 1
+        ? paths[0]!
+        : await ctx.dialogs.select({ title: `Files matching "${query.trim()}"`, options: paths });
+    if (path && getSingleFileState().active) retargetLive(path);
+  }
+
+  /** gunk: ids of the files whose search source stays worth keeping across this load. */
+  function searchedFileIds(files: readonly ExtensionDiffFile[]) {
+    return (getSingleFileState().active ? getReviewMirror().allFiles : files).map(
+      (file) => file.id,
+    );
+  }
+
+  hunk.on("startup", ({ cwd }, ctx) => {
+    liveReviewCtx = ctx;
+    ensureRepoLoaded(cwd, ctx.notify);
+  });
   hunk.on("changeset_loaded", ({ changeset }, ctx) => {
+    liveReviewCtx = ctx;
     ensureRepoLoaded(ctx.cwd, ctx.notify);
     setMirrorFiles(changeset.files);
     reconcileViewed(changeset.files);
     refreshProjectedFiles(changeset.files);
-    pruneSearchFiles(changeset.files.map((file) => file.id));
+    pruneSearchFiles(searchedFileIds(changeset.files));
     rebuildHitsIfActive();
   });
   hunk.on("session_reload", ({ changeset }, ctx) => {
+    liveReviewCtx = ctx;
     ensureRepoLoaded(ctx.cwd, ctx.notify);
     setMirrorFiles(changeset.files);
     reconcileViewed(changeset.files);
     refreshProjectedFiles(changeset.files);
-    pruneSearchFiles(changeset.files.map((file) => file.id));
+    pruneSearchFiles(searchedFileIds(changeset.files));
     rebuildHitsIfActive();
     // The reload that follows leaving single-file mode: reselect the file that mode was showing,
     // scrolled to the top, instead of leaving the selection wherever it lands by default.
@@ -566,40 +687,54 @@ export default function (hunk: HunkExtensionAPI) {
     }
   });
 
+  /**
+   * The keys single-file mode answers to, also while a search runs on top of it: `,`/`.` step
+   * to the neighbor file, `t` finds a file by name, Enter loads a pending pane pick.
+   */
+  function singleFileKey(
+    key: ExtensionKeyEvent,
+    ctx: ExtensionKeyboardModeContext,
+  ): ExtensionKeyboardModeKeyResult {
+    const { targetPath, pendingPath } = getSingleFileState();
+    const files = getReviewMirror().allFiles;
+    if (matchesKey("t", key)) {
+      void findFileInSingle();
+      return "handled";
+    }
+    if (matchesKey(".", key) || matchesKey(",", key)) {
+      const direction = matchesKey(".", key) ? 1 : -1;
+      const next = neighborPath(files, targetPath, direction);
+      if (next) retarget(next, (id) => ctx.commands.execute(id), ctx.notify);
+      else
+        ctx.notify(direction === 1 ? "No file after this one" : "No file before this one", "info");
+      return "handled";
+    }
+    if (matchesKey("enter", key)) {
+      if (!pendingPath) return "pass";
+      retarget(pendingPath, (id) => ctx.commands.execute(id), ctx.notify);
+      return "handled";
+    }
+    return "pass";
+  }
+
   hunk.registerKeyboardMode({
     id: SINGLE_MODE_ID,
     title: "Single file",
     // The target is seeded by the `singleFile` command before entry (selection can be debounced
-    // by the time onEnter runs), so entry only needs to reload with that target in effect.
+    // by the time onEnter runs), so entry only needs to reload with that target in effect. A
+    // return after a search finds the view already showing its file.
     onEnter(ctx) {
+      if (resumingSingle) return;
       ctx.commands.execute("hunk.app.refresh");
     },
     onExit(ctx) {
+      // gunk: a search on top keeps the view; the search's end re-enters the mode.
+      if (singleSuspendedForSearch) return;
       const { targetPath } = getSingleFileState();
       exitSingleFile(targetPath);
       ctx.commands.execute("hunk.app.refresh");
     },
-    onKey(key: ExtensionKeyEvent, ctx) {
-      const { targetPath, pendingPath } = getSingleFileState();
-      const files = getReviewMirror().allFiles;
-      if (matchesKey(".", key) || matchesKey(",", key)) {
-        const direction = matchesKey(".", key) ? 1 : -1;
-        const next = neighborPath(files, targetPath, direction);
-        if (next) retarget(next, (id) => ctx.commands.execute(id), ctx.notify);
-        else
-          ctx.notify(
-            direction === 1 ? "No file after this one" : "No file before this one",
-            "info",
-          );
-        return "handled";
-      }
-      if (matchesKey("enter", key)) {
-        if (!pendingPath) return "pass";
-        retarget(pendingPath, (id) => ctx.commands.execute(id), ctx.notify);
-        return "handled";
-      }
-      return "pass";
-    },
+    onKey: singleFileKey,
   });
 
   hunk.registerCommand(
@@ -607,6 +742,14 @@ export default function (hunk: HunkExtensionAPI) {
     (ctx) => {
       if (ctx.keyboardModes.isActive(SINGLE_MODE_ID)) {
         ctx.keyboardModes.exitMode();
+        return;
+      }
+      // gunk: `o` under a search started in single-file mode ends both.
+      if (getSingleFileState().active) {
+        singleSuspendedForSearch = false;
+        applyClear(ctx);
+        exitSingleFile(getSingleFileState().targetPath);
+        ctx.commands.execute("hunk.app.refresh");
         return;
       }
       if (!ctx.commands.isEnabled("hunk.app.refresh")) {
@@ -686,11 +829,18 @@ export default function (hunk: HunkExtensionAPI) {
   hunk.registerKeyboardMode({
     id: SEARCH_ACTIVE_MODE_ID,
     title: "Search",
-    onKey: () => "pass",
+    // gunk: a search on top of single-file mode keeps that mode's keys.
+    onKey: (key, ctx) => (getSingleFileState().active ? singleFileKey(key, ctx) : "pass"),
     // Esc (host-owned) or a replacement by another mode lands here: the search is over. The
     // command context that started it still holds the controls that take its marks and bar down.
-    onExit() {
-      if (getSearchState().query !== "" && searchCtx) applyClear(searchCtx);
+    onExit(modeCtx) {
+      const ctx = searchCtx;
+      if (getSearchState().query !== "" && ctx) {
+        // This exit's own highlight controls are current even when the search command's expired.
+        applyClear(ctx, modeCtx.highlights);
+        // Mode changes are refused inside onExit, so the return to single-file mode waits a tick.
+        setTimeout(() => resumeSingleAfterSearch(ctx), 0);
+      }
       searchCtx = null;
     },
   });
@@ -716,5 +866,8 @@ export default function (hunk: HunkExtensionAPI) {
     runPrompt(ctx, getSearchState().query),
   );
 
-  hunk.registerCommand({ id: "searchClear", title: "Clear search" }, (ctx) => applyClear(ctx));
+  hunk.registerCommand({ id: "searchClear", title: "Clear search" }, (ctx) => {
+    applyClear(ctx);
+    resumeSingleAfterSearch(ctx);
+  });
 }
