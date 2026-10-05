@@ -121,7 +121,7 @@ describe("saved review notes", () => {
     }
   });
 
-  test("a handled note is shown with a marker, or deleted on open with delete_handled_notes", async () => {
+  test("a handled note starts hidden and H shows it marked, or it is deleted on open with delete_handled_notes", async () => {
     const dir = createRepo();
     const notesPath = resolveSavedNotesPath(join(stateHome, "hunk"), dir, "main");
     const writeNotes = () => {
@@ -157,7 +157,7 @@ describe("saved review notes", () => {
       );
     };
 
-    // Default: both come back, the handled one says so in its title.
+    // Default: both come back, but the handled one starts hidden (gunk); H shows it, marked.
     writeNotes();
     let bootstrap = await loadAppBootstrap(
       { kind: "vcs", staged: false, options: { mode: "unified", excludeUntracked: true } },
@@ -165,25 +165,24 @@ describe("saved review notes", () => {
     );
     let setup = await testRender(<AppHost bootstrap={bootstrap} />, { width: 120, height: 30 });
     try {
-      let frame = await waitForFrame(setup, (f) => f.includes("already handled"));
-      expect(frame).toContain("still open");
-      expect(frame).toMatch(/Your note · now · handled/);
+      let frame = await waitForFrame(setup, (f) => f.includes("still open"));
+      expect(frame).not.toContain("already handled");
       expect(Object.keys(JSON.parse(readFileSync(notesPath, "utf8")).notes).sort()).toEqual([
         "user:1",
         "user:2",
       ]);
-      // H hides the handled note only; a second H brings it back.
+      // H shows the handled note, marked in its title; a second H hides it again.
+      await act(async () => {
+        await setup.mockInput.typeText("H");
+      });
+      frame = await waitForFrame(setup, (f) => f.includes("already handled"));
+      expect(frame).toMatch(/Your note · now · handled/);
+      expect(frame).toContain("still open");
       await act(async () => {
         await setup.mockInput.typeText("H");
       });
       frame = await waitForFrame(setup, (f) => !f.includes("already handled"));
       expect(frame).not.toContain("already handled");
-      expect(frame).toContain("still open");
-      await act(async () => {
-        await setup.mockInput.typeText("H");
-      });
-      frame = await waitForFrame(setup, (f) => f.includes("already handled"));
-      expect(frame).toContain("already handled");
     } finally {
       await act(async () => {
         setup.renderer.destroy();
@@ -251,8 +250,9 @@ describe("saved review notes", () => {
       await act(async () => {
         await setup.mockInput.typeText("h");
       });
-      let frame = await waitForFrame(setup, (f) => /Your note · now · handled/.test(f));
-      expect(frame).toMatch(/Your note · now · handled/);
+      // Handled notes start hidden, so the flagged note leaves the diff at once.
+      let frame = await waitForFrame(setup, (f) => !f.includes("flag me"));
+      expect(frame).not.toContain("flag me");
       let saved = false;
       for (let attempt = 0; attempt < 40 && !saved; attempt++) {
         await flush(setup);
@@ -261,6 +261,15 @@ describe("saved review notes", () => {
       }
       expect(saved).toBe(true);
 
+      // H shows it again, marked; selecting it and pressing h clears the flag.
+      await act(async () => {
+        await setup.mockInput.typeText("H");
+      });
+      frame = await waitForFrame(setup, (f) => /Your note · now · handled/.test(f));
+      expect(frame).toMatch(/Your note · now · handled/);
+      await act(async () => {
+        await setup.mockInput.typeText("}");
+      });
       await act(async () => {
         await setup.mockInput.typeText("h");
       });

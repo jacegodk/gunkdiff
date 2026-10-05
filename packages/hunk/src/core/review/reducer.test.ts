@@ -591,7 +591,10 @@ describe("drafts", () => {
   });
 
   test("hiding handled notes drops focus from a handled active note and nothing else", () => {
-    const started = reduceReviewState(createTestReviewState(), { type: "draft/start", draft });
+    const started = reduceReviewState(
+      { ...createTestReviewState(), showHandledNotes: true },
+      { type: "draft/start", draft },
+    );
     const handledNote = createTestStoredNote({ id: "user-h", fileKey: "alpha", source: "user" });
     handledNote.note.tags = ["handled"];
     const saved = reduceReviewState(started, { type: "draft/save", note: handledNote });
@@ -616,6 +619,7 @@ describe("drafts", () => {
   test("setting handled tags one note, user or live, and drops focus only when handled notes are hidden", () => {
     const base = {
       ...createTestReviewState(["alpha"], { showAgentNotes: true }),
+      showHandledNotes: true,
       activeNoteId: "user-1",
       liveNotes: [createTestStoredNote({ id: "live-1", fileKey: "alpha" })],
       userNotes: [createTestStoredNote({ id: "user-1", fileKey: "alpha", source: "user" })],

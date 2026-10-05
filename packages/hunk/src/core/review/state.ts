@@ -237,7 +237,8 @@ export function createInitialReviewState(
     },
     filter: "",
     showAgentNotes: options.showAgentNotes ?? false,
-    showHandledNotes: options.showHandledNotes ?? true,
+    // gunk: handled notes are done; they start hidden and `H` shows them.
+    showHandledNotes: options.showHandledNotes ?? false,
     showUserNotes: options.showUserNotes ?? true,
     activeNoteId: null,
     liveNotes: [],
