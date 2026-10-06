@@ -237,7 +237,7 @@ function renderStaticSplitRow(
     return "";
   }
 
-  const { leftWidth, rightWidth } = resolveSplitPaneWidths(width);
+  const { leftWidth, rightWidth } = resolveSplitPaneWidths(width, row.oldSideAbsent);
   return `${renderStaticSplitCell(
     row.left,
     "left",

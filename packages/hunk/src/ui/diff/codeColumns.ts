@@ -109,14 +109,26 @@ export function findMaxLineNumberInRows(rows: Iterable<DiffRow>, fallback = 1) {
   return Math.max(highest, 1);
 }
 
-/** Split-view panes reserve one rail column on the left and one separator column in the middle. */
-export function resolveSplitPaneWidths(width: number) {
+/** gunk: the old-side strip of a file with no previous version: 5% of the row, room for "previous". */
+const ABSENT_OLD_SIDE_SHARE = 0.05;
+const ABSENT_OLD_SIDE_MIN_WIDTH = 12;
+
+/**
+ * Split-view panes reserve one rail column on the left and one separator column in the middle.
+ *
+ * gunk: with `oldSideAbsent` (a new file) the old side shrinks to a narrow strip and the new side
+ * takes the rest, never wider than the even split would give the old side.
+ */
+export function resolveSplitPaneWidths(width: number, oldSideAbsent = false) {
   const usableWidth = Math.max(0, width - DIFF_RAIL_PREFIX_WIDTH - DIFF_SPLIT_SEPARATOR_WIDTH);
-  const leftWidth = Math.max(0, DIFF_RAIL_PREFIX_WIDTH + Math.floor(usableWidth / 2));
-  const rightWidth = Math.max(
-    0,
-    DIFF_SPLIT_SEPARATOR_WIDTH + usableWidth - Math.floor(usableWidth / 2),
-  );
+  const evenLeftWidth = Math.max(0, DIFF_RAIL_PREFIX_WIDTH + Math.floor(usableWidth / 2));
+  const leftWidth = oldSideAbsent
+    ? Math.min(
+        evenLeftWidth,
+        Math.max(ABSENT_OLD_SIDE_MIN_WIDTH, Math.round(width * ABSENT_OLD_SIDE_SHARE)),
+      )
+    : evenLeftWidth;
+  const rightWidth = Math.max(0, width - leftWidth);
 
   return { leftWidth, rightWidth };
 }

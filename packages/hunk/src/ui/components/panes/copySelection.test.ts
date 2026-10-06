@@ -1396,6 +1396,12 @@ describe("resolveCopySelectionSide", () => {
   test("returns 'right' for columns at or past the split midpoint", () => {
     expect(resolveCopySelectionSide(100, "split", 120)).toBe("right");
   });
+
+  test("a new file's narrow old side moves the split, so its code columns read as 'right'", () => {
+    expect(resolveCopySelectionSide(20, "split", 120)).toBe("left");
+    expect(resolveCopySelectionSide(20, "split", 120, true)).toBe("right");
+    expect(resolveCopySelectionSide(5, "split", 120, true)).toBe("left");
+  });
 });
 
 describe("renderCopySelectionText with side", () => {

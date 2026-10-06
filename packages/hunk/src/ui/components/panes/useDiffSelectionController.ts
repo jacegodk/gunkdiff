@@ -33,6 +33,7 @@ import {
   planSelectionActionBar,
   projectCommentSelection,
   renderCopySelectionText,
+  oldSideAbsentAtVisualRow,
   resolveCopySelectionSide,
   type CopySelectionContext,
   type CopySelectionDrag,
@@ -143,10 +144,22 @@ export function useDiffSelectionController({
 
   // In split layout, selection paint, clipboard copy, and comment projection all retain the side
   // where acquisition began. Stack layout has one column, so its side remains undefined.
+  /** gunk: the split side under a review-row point; a new file's narrow old side moves the line. */
+  const sideAtPoint = useCallback(
+    (point: CopySelectionPoint) =>
+      resolveCopySelectionSide(
+        point.column,
+        layout,
+        diffContentWidth,
+        point.kind === "review-row" &&
+          oldSideAbsentAtVisualRow(point.visualRow, fileSectionLayouts, sectionGeometry),
+      ),
+    [diffContentWidth, fileSectionLayouts, layout, sectionGeometry],
+  );
   const selectionSide: CopySelectionSide | undefined = useMemo(() => {
     if (!selectionDrag || selectionDrag.anchor.kind !== "review-row") return undefined;
-    return resolveCopySelectionSide(selectionDrag.anchor.column, layout, diffContentWidth);
-  }, [diffContentWidth, layout, selectionDrag]);
+    return sideAtPoint(selectionDrag.anchor);
+  }, [sideAtPoint, selectionDrag]);
 
   const selectedRowKeysByFile = useMemo(
     () =>
@@ -187,12 +200,9 @@ export function useDiffSelectionController({
         drag,
         fileSectionLayouts,
         sectionGeometry,
-        side:
-          drag?.anchor.kind === "review-row"
-            ? resolveCopySelectionSide(drag.anchor.column, layout, diffContentWidth)
-            : undefined,
+        side: drag?.anchor.kind === "review-row" ? sideAtPoint(drag.anchor) : undefined,
       }),
-    [diffContentWidth, fileSectionLayouts, layout, sectionGeometry],
+    [fileSectionLayouts, sectionGeometry, sideAtPoint],
   );
   const commentSelection = useMemo(
     () => projectSelectionForComment(selectionDrag),
@@ -208,12 +218,12 @@ export function useDiffSelectionController({
       renderCopySelectionText({
         context,
         end,
-        side: resolveCopySelectionSide(selection.anchor.column, layout, diffContentWidth),
+        side: sideAtPoint(selection.anchor),
         start,
       }),
     );
     return true;
-  }, [context, copySelectionText, diffContentWidth, layout]);
+  }, [context, copySelectionText, sideAtPoint]);
 
   /** Start a range note when the committed selection has one semantic projection. */
   const commentOnCommittedSelection = useCallback(() => {
@@ -235,9 +245,9 @@ export function useDiffSelectionController({
 
   /** Return full-line terminal columns for one source side in the active layout. */
   const keyboardSelectionColumns = useCallback(
-    (side: "old" | "new") => {
+    (side: "old" | "new", oldSideAbsent: boolean) => {
       if (layout !== "split") return { start: 0, end: Math.max(0, diffContentWidth - 1) };
-      const { leftWidth } = resolveSplitPaneWidths(diffContentWidth);
+      const { leftWidth } = resolveSplitPaneWidths(diffContentWidth, oldSideAbsent);
       return side === "old"
         ? { start: 0, end: Math.max(0, leftWidth - 1) }
         : { start: leftWidth, end: Math.max(leftWidth, diffContentWidth - 1) };
@@ -254,7 +264,10 @@ export function useDiffSelectionController({
       if (!bounds) return false;
       const focusTop = bounds.top;
       const focusBottom = bounds.top + Math.max(0, bounds.height - 1);
-      const columns = keyboardSelectionColumns(keyboardSelection.side);
+      const columns = keyboardSelectionColumns(
+        keyboardSelection.side,
+        oldSideAbsentAtVisualRow(keyboardSelection.anchorTop, fileSectionLayouts, sectionGeometry),
+      );
       const movingDown = focusTop >= keyboardSelection.anchorTop;
       const selection: CopySelectionDrag = {
         anchor: {
@@ -275,7 +288,7 @@ export function useDiffSelectionController({
       setSelectionDrag(selection);
       return true;
     },
-    [keyboardSelectionColumns, lineCursorBoundsOf],
+    [fileSectionLayouts, keyboardSelectionColumns, lineCursorBoundsOf, sectionGeometry],
   );
 
   /** Begin keyboard acquisition at the current measured source row. */
@@ -488,7 +501,7 @@ export function useDiffSelectionController({
           fileSectionLayouts,
           point: current.anchor,
           sectionGeometry,
-          side: resolveCopySelectionSide(current.anchor.column, layout, diffContentWidth),
+          side: sideAtPoint(current.anchor),
         });
         if (clickedCursor && onViewportLineCursorChange) {
           onViewportLineCursorChange(clickedCursor);
@@ -508,6 +521,7 @@ export function useDiffSelectionController({
       onViewportLineCursorChange,
       resolveSelectionPoint,
       sectionGeometry,
+      sideAtPoint,
     ],
   );
 
@@ -558,7 +572,18 @@ export function useDiffSelectionController({
       selectionDrag.focus.kind === "review-row"
         ? selectionDrag.focus.visualRow
         : selectionDrag.focus.nextVisualRow - 1;
-    const splitWidths = layout === "split" ? resolveSplitPaneWidths(diffContentWidth) : null;
+    const splitWidths =
+      layout === "split"
+        ? resolveSplitPaneWidths(
+            diffContentWidth,
+            selectionDrag.anchor.kind === "review-row" &&
+              oldSideAbsentAtVisualRow(
+                selectionDrag.anchor.visualRow,
+                fileSectionLayouts,
+                sectionGeometry,
+              ),
+          )
+        : null;
     const selectedPaneLeft = splitWidths && selectionSide === "right" ? splitWidths.leftWidth : 0;
     const selectedPaneWidth = splitWidths
       ? selectionSide === "right"
@@ -590,11 +615,13 @@ export function useDiffSelectionController({
     copyLabel,
     diffContentWidth,
     effectiveScrollTop,
+    fileSectionLayouts,
     height,
     layout,
     preferredActionBarWidth,
     scrollRef,
     scrollViewportHeight,
+    sectionGeometry,
     selectionDrag,
     selectionSide,
   ]);

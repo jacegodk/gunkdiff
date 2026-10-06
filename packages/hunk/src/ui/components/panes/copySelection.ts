@@ -81,12 +81,38 @@ export function resolveCopySelectionSide(
   column: number,
   layout: Exclude<LayoutMode, "auto">,
   width: number,
+  oldSideAbsent = false,
 ): CopySelectionSide | undefined {
   if (layout !== "split") {
     return undefined;
   }
-  const { leftWidth } = resolveSplitPaneWidths(width);
+  const { leftWidth } = resolveSplitPaneWidths(width, oldSideAbsent);
   return column < leftWidth ? "left" : "right";
+}
+
+/** gunk: whether one planned row splits as a file with no previous version (narrow old side). */
+export function rowOldSideAbsent(row: PlannedReviewRow | undefined) {
+  return (
+    row?.kind === "diff-row" && row.row.type === "split-line" && row.row.oldSideAbsent === true
+  );
+}
+
+/** gunk: whether the row at `visualRow` splits as a file with no previous version. */
+export function oldSideAbsentAtVisualRow(
+  visualRow: number,
+  fileSectionLayouts: readonly FileSectionLayout[],
+  sectionGeometry: readonly DiffSectionGeometry[],
+) {
+  const section = fileSectionLayouts.find(
+    (candidate) =>
+      visualRow >= candidate.bodyTop && visualRow < candidate.bodyTop + candidate.bodyHeight,
+  );
+  const geometry = section ? sectionGeometry[section.sectionIndex] : undefined;
+  if (!section || !geometry) return false;
+  const rowIndex = geometry.rowBounds.findIndex((bounds) =>
+    rowBoundsContainsVisualRow(bounds, visualRow - section.bodyTop),
+  );
+  return rowOldSideAbsent(geometry.plannedRows[rowIndex]);
 }
 
 /** Clamp one terminal column into the rendered diff body. */
@@ -299,7 +325,8 @@ function resolveCopyVisualLineOffset({
   row: PlannedReviewRow;
 }) {
   const { copyDecorations, layout, width } = context;
-  const splitPaneWidths = layout === "split" ? resolveSplitPaneWidths(width) : null;
+  const splitPaneWidths =
+    layout === "split" ? resolveSplitPaneWidths(width, rowOldSideAbsent(row)) : null;
 
   if (copyDecorations) {
     return copySide === "right" && splitPaneWidths ? splitPaneWidths.leftWidth : 0;
@@ -445,7 +472,12 @@ export function renderCopySelectionText({
   const copySide =
     side ??
     (context.layout === "split" && start.kind === "review-row"
-      ? resolveCopySelectionSide(start.column, context.layout, context.width)
+      ? resolveCopySelectionSide(
+          start.column,
+          context.layout,
+          context.width,
+          oldSideAbsentAtVisualRow(start.visualRow, fileSectionLayouts, sectionGeometry),
+        )
       : undefined);
 
   if (
@@ -626,8 +658,13 @@ export function expandSelectionPoint(
       // In split layout, scope to the side containing the click so triple-click never
       // selects across both panes or resolves to the wrong side for copy/highlight.
       if (layout === "split") {
-        const { leftWidth } = resolveSplitPaneWidths(width);
-        const clickSide = resolveCopySelectionSide(point.column, layout, width);
+        const { leftWidth } = resolveSplitPaneWidths(width, rowOldSideAbsent(row));
+        const clickSide = resolveCopySelectionSide(
+          point.column,
+          layout,
+          width,
+          rowOldSideAbsent(row),
+        );
         if (clickSide === "right") {
           return { startCol: leftWidth, endCol: width - 1 };
         }
@@ -637,7 +674,7 @@ export function expandSelectionPoint(
     }
 
     // Double-click: expand to word boundaries within the code content (excluding rail/gutter).
-    const side = resolveCopySelectionSide(point.column, layout, width);
+    const side = resolveCopySelectionSide(point.column, layout, width, rowOldSideAbsent(row));
 
     const rowTextOptions = {
       codeHorizontalOffset: context.codeHorizontalOffset,

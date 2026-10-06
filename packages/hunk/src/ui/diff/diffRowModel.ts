@@ -72,6 +72,11 @@ export type DiffRow =
       isExpansionRow?: true;
       /** Exact collapsed gap this synthesized row reveals. */
       expandedGapKey?: string;
+      /**
+       * gunk: the file has no previous version, so the old side is a narrow labeled strip and
+       * the new side takes the rest of the row. See `resolveSplitPaneWidths`.
+       */
+      oldSideAbsent?: true;
     }
   | {
       type: "unified-line";

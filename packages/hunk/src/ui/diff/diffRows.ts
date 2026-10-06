@@ -682,6 +682,14 @@ export function spansForHighlightedSourceLine(
   return fallbackText.length > 0 ? [{ text: fallbackText }] : [];
 }
 
+/** gunk: the words the old-side strip of a new file shows, one per row from its top. */
+const NO_OLD_SIDE_LABEL = ["no", "previous", "file"] as const;
+
+/** gunk: whether a file has no previous version at all (added or untracked). */
+export function fileHasNoOldSide(file: Pick<DiffFile, "isUntracked" | "metadata">) {
+  return file.isUntracked === true || file.metadata.type === "new";
+}
+
 /** Expand Pierre metadata into the flat split-view row stream consumed by the renderer. */
 export function buildSplitRows(
   file: DiffFile,
@@ -693,6 +701,9 @@ export function buildSplitRows(
   const rows: DiffRow[] = [];
   const deletionLines = highlighted?.deletionLines ?? [];
   const additionLines = highlighted?.additionLines ?? [];
+  // gunk: a file with no previous version gets a narrow old side that says so, word by word.
+  const oldSideAbsent = fileHasNoOldSide(file);
+  const oldSideLabel: string[] = [...NO_OLD_SIDE_LABEL];
 
   for (const [hunkIndex, hunk] of file.metadata.hunks.entries()) {
     const leadingGap = reviewLeadingGap(file.metadata, hunkIndex);
@@ -757,23 +768,31 @@ export function buildSplitRows(
         const hasDeletion = offset < content.deletions;
         const hasAddition = offset < content.additions;
 
+        const labelWord = oldSideAbsent ? oldSideLabel.shift() : undefined;
         rows.push({
           type: "split-line",
           key: `${file.id}:split:${hunkIndex}:change:${deletionLineIndex + offset}:${additionLineIndex + offset}`,
           fileId: file.id,
           hunkIndex,
-          left: hasDeletion
-            ? makeSplitCell(
-                "deletion",
-                deletionLineNumber + offset,
-                file.metadata.deletionLines[deletionLineIndex + offset],
-                deletionLines[deletionLineIndex + offset],
-                theme,
-                tabWidth,
-                file.lineMoveKinds?.deletionLines[deletionLineIndex + offset],
-                compactRunsForHighlightedLine(highlighted, "deletion", deletionLineIndex + offset),
-              )
-            : makeSplitCell("empty", undefined, undefined, undefined, theme, tabWidth),
+          ...(oldSideAbsent ? { oldSideAbsent: true as const } : {}),
+          left: labelWord
+            ? { kind: "empty", sign: " ", spans: [{ text: labelWord, fg: theme.muted }] }
+            : hasDeletion
+              ? makeSplitCell(
+                  "deletion",
+                  deletionLineNumber + offset,
+                  file.metadata.deletionLines[deletionLineIndex + offset],
+                  deletionLines[deletionLineIndex + offset],
+                  theme,
+                  tabWidth,
+                  file.lineMoveKinds?.deletionLines[deletionLineIndex + offset],
+                  compactRunsForHighlightedLine(
+                    highlighted,
+                    "deletion",
+                    deletionLineIndex + offset,
+                  ),
+                )
+              : makeSplitCell("empty", undefined, undefined, undefined, theme, tabWidth),
           right: hasAddition
             ? makeSplitCell(
                 "addition",

@@ -1373,6 +1373,29 @@ describe("UI components", () => {
     }
   });
 
+  test("DiffPane gives a new file's split view to the new side, with a short no-previous-file strip", async () => {
+    const created = createTestDiffFile(
+      "created",
+      "created.ts",
+      "",
+      "export const createdLineOne = 1;\nexport const createdLineTwo = 2;\nexport const createdLineThree = 3;\n",
+    );
+    const file = { ...created, metadata: { ...created.metadata, type: "new" as const } };
+    const props = createDiffPaneProps([file], resolveTheme("github-dark-default", null), {
+      diffContentWidth: 116,
+      width: 120,
+    });
+    const frame = await captureFrame(<DiffPane {...props} />, 120, 16);
+    const lines = frame.split("\n");
+    const codeLine = lines.find((line) => line.includes("createdLineOne"));
+
+    expect(codeLine).toBeDefined();
+    // The new side starts within the first fifth of the row, not at the halfway split.
+    expect(codeLine!.indexOf("export const createdLineOne")).toBeLessThan(30);
+    expect(lines.some((line) => /\bno\b/.test(line))).toBe(true);
+    expect(lines.some((line) => line.includes("previous"))).toBe(true);
+  });
+
   test("DiffPane registers one renderer blur listener however many files are mounted", async () => {
     const files = createWindowingFiles(14);
     const props = createDiffPaneProps(files, resolveTheme("github-dark-default", null), {

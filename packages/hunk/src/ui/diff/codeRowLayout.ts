@@ -107,12 +107,16 @@ export function planCodeRowLayout(
     showAddNoteBadge || (wrapLines && reserveAddNoteColumn) ? CODE_ROW_ADD_NOTE_BADGE_WIDTH : 0;
 
   if (row.type === "split-line") {
-    const { leftWidth: leftPaneWidth, rightWidth: rightPaneWidth } = resolveSplitPaneWidths(width);
+    const { leftWidth: leftPaneWidth, rightWidth: rightPaneWidth } = resolveSplitPaneWidths(
+      width,
+      row.oldSideAbsent,
+    );
     const rightWidth = Math.max(0, rightPaneWidth - trailingGuideWidth - addNoteBadgeWidth);
     const leftGeometry = resolveSplitCellGeometry(
       leftPaneWidth,
       lineNumberDigits,
-      showLineNumbers,
+      // gunk: a new file's old side has no line numbers, so its narrow strip keeps the room.
+      showLineNumbers && !row.oldSideAbsent,
       prefixWidth,
     );
     const rightGeometry = resolveSplitCellGeometry(
