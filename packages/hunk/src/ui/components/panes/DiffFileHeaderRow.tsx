@@ -16,8 +16,8 @@ interface DiffFileHeaderRowProps {
 
 /** Blocks either side of the selected file's name, so its band reads as one bar across the row. */
 const BAND_GLYPH = "█";
-/** gunk: a thin line for every other file, so only the selected file carries a bar. */
-const LINE_GLYPH = "─";
+/** gunk: a dim line of "=" for every other file, so only the selected file carries a bar. */
+const LINE_GLYPH = "=";
 /** Blank cells between the name and the band, so the name is not crowded. */
 const NAME_PADDING = 1;
 

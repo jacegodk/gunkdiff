@@ -678,7 +678,7 @@ describe("UI components", () => {
         const color = (match: (text: string) => boolean) =>
           capturedTestColorToHex(spans.find((span) => match(span.text))?.fg)?.toLowerCase();
         return {
-          band: color((text) => text.includes(selected ? "█" : "─")),
+          band: color((text) => text.includes(selected ? "█" : "===")),
           name: color((text) => text.includes("band.ts")),
           filled: spans.some((span) => span.text.includes("█")),
         };
