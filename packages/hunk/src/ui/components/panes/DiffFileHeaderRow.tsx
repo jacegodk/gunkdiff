@@ -8,6 +8,8 @@ interface DiffFileHeaderRowProps {
   file: DiffFile;
   headerLabelWidth: number;
   headerStatsWidth: number;
+  /** gunk: the selected file's band and name are bright; the others are dimmed. */
+  selected?: boolean;
   theme: AppTheme;
   onSelect?: () => void;
 }
@@ -28,6 +30,7 @@ export function DiffFileHeaderRow({
   file,
   headerLabelWidth,
   headerStatsWidth,
+  selected = false,
   theme,
   onSelect,
 }: DiffFileHeaderRowProps) {
@@ -39,7 +42,7 @@ export function DiffFileHeaderRow({
     measureTextWidth(filename) + measureTextWidth(stateLabel ?? "") + 2 * NAME_PADDING;
   const fill = Math.max(0, headerLabelWidth - nameWidth);
   const leftFill = Math.floor(fill / 2);
-  const band = fileBandColor(theme);
+  const band = fileBandColor(theme, selected);
   const padding = " ".repeat(NAME_PADDING);
 
   return (
@@ -59,7 +62,7 @@ export function DiffFileHeaderRow({
       {/* Clicking the file header jumps the main stream selection without collapsing to a single-file view. */}
       <box style={{ flexDirection: "row" }}>
         <text fg={band}>{`${BAND_GLYPH.repeat(leftFill)}${padding}`}</text>
-        <text fg={theme.text}>{filename}</text>
+        <text fg={selected ? theme.text : theme.muted}>{filename}</text>
         {stateLabel && <text fg={theme.muted}>{stateLabel}</text>}
         <text fg={band}>{`${padding}${BAND_GLYPH.repeat(fill - leftFill)}`}</text>
       </box>

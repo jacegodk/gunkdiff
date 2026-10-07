@@ -2579,6 +2579,7 @@ export function DiffPane({
                 file={pinnedHeaderFile}
                 headerLabelWidth={headerLabelWidth}
                 headerStatsWidth={headerStatsWidth}
+                selected={pinnedHeaderFile.id === selectedFileId}
                 theme={theme}
                 onSelect={() => onSelectFile(pinnedHeaderFile.id)}
               />

@@ -87,11 +87,11 @@ export function dimRailColor(color: string, theme: AppTheme) {
 }
 
 /**
- * gunk: the filled band that starts a file. Bright enough to separate two files at a glance,
- * blended a little toward the pane so it does not read as white on a dark theme.
+ * gunk: the filled band that starts a file. The selected file's band is drawn in the text color
+ * so it stands out; every other band is blended toward the pane so it recedes.
  */
-export function fileBandColor(theme: AppTheme) {
-  return blendHex(theme.muted, theme.panel, FILE_BAND_BLEND);
+export function fileBandColor(theme: AppTheme, selected: boolean) {
+  return selected ? theme.text : blendHex(theme.muted, theme.panel, FILE_BAND_BLEND);
 }
 
 /** Pick the unified-view rail color for one rendered row. */

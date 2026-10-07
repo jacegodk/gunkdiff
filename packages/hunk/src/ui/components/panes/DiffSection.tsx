@@ -143,6 +143,8 @@ function DiffSectionComponent({
           file={file}
           headerLabelWidth={headerLabelWidth}
           headerStatsWidth={headerStatsWidth}
+          // The pane passes -1 for every file but the selected one.
+          selected={selectedHunkIndex >= 0}
           theme={theme}
           onSelect={onSelect}
         />

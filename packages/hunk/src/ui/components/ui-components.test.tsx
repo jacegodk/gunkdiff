@@ -656,6 +656,46 @@ describe("UI components", () => {
     expect(firstLine[statsIndex + "+2 -1".length + 1]).toBe(" ");
   });
 
+  test("DiffFileHeaderRow paints the selected file's band and name bright, the others dimmed", async () => {
+    const theme = resolveTheme("github-dark-default", null);
+    const file = createTestDiffFile("band", "band.ts", lines("a"), lines("b"));
+    const paint = async (selected: boolean) => {
+      const setup = await testRender(
+        <DiffFileHeaderRow
+          file={file}
+          headerLabelWidth={30}
+          headerStatsWidth={8}
+          selected={selected}
+          theme={theme}
+        />,
+        { width: 40, height: 2 },
+      );
+      try {
+        await act(async () => {
+          await setup.renderOnce();
+        });
+        const spans = setup.captureSpans().lines[0]?.spans ?? [];
+        const color = (match: (text: string) => boolean) =>
+          capturedTestColorToHex(spans.find((span) => match(span.text))?.fg)?.toLowerCase();
+        return {
+          band: color((text) => text.includes("█")),
+          name: color((text) => text.includes("band.ts")),
+        };
+      } finally {
+        await act(async () => {
+          setup.renderer.destroy();
+        });
+      }
+    };
+
+    const selected = await paint(true);
+    const unselected = await paint(false);
+    expect(selected.band).toBe(theme.text.toLowerCase());
+    expect(selected.name).toBe(theme.text.toLowerCase());
+    expect(unselected.band).not.toBe(selected.band);
+    expect(unselected.name).toBe(theme.muted.toLowerCase());
+  });
+
   test("DiffRowView renders a clickable add-note affordance for a hovered diff row", async () => {
     const theme = resolveTheme("github-dark-default", null);
     const startUserNote = mock(() => undefined);
