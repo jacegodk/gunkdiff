@@ -4,7 +4,7 @@ import type { ExtensionLineHighlightTone } from "../../extension-api/types";
 import type { SplitLineCell, UnifiedLineCell } from "./diffRows";
 
 const INACTIVE_RAIL_BLEND = 0.35;
-const FILE_BAND_BLEND = 0.75;
+const FILE_BAND_BLEND = 0.35;
 const SELECTION_BG_BLEND = 0.75;
 const CURSOR_LINE_BG_BLEND = 0.2;
 const selectionBackgroundCache = new WeakMap<AppTheme, Map<string, string>>();
@@ -87,8 +87,8 @@ export function dimRailColor(color: string, theme: AppTheme) {
 }
 
 /**
- * gunk: the filled band that starts a file. The selected file's band is drawn in the text color
- * so it stands out; every other band is blended toward the pane so it recedes.
+ * gunk: the band that starts a file. The selected file's band is drawn in the text color so it
+ * stands out; every other band is blended well toward the pane so it recedes.
  */
 export function fileBandColor(theme: AppTheme, selected: boolean) {
   return selected ? theme.text : blendHex(theme.muted, theme.panel, FILE_BAND_BLEND);

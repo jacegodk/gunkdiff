@@ -173,7 +173,8 @@ describe("PTY layout", () => {
       const preceding = lines.slice(betaIndex - 3, betaIndex);
       expect(preceding).toHaveLength(3);
       for (const line of preceding) expect(line.trim()).toBe("");
-      expect(lines[betaIndex]).toContain("█");
+      // beta is not the selected file, so its band is the thin line.
+      expect(lines[betaIndex]).toContain("─");
     } finally {
       session.close();
     }

@@ -14,8 +14,10 @@ interface DiffFileHeaderRowProps {
   onSelect?: () => void;
 }
 
-/** Blocks either side of the name, so the band reads as one bar across the row. */
+/** Blocks either side of the selected file's name, so its band reads as one bar across the row. */
 const BAND_GLYPH = "█";
+/** gunk: a thin line for every other file, so only the selected file carries a bar. */
+const LINE_GLYPH = "─";
 /** Blank cells between the name and the band, so the name is not crowded. */
 const NAME_PADDING = 1;
 
@@ -43,6 +45,7 @@ export function DiffFileHeaderRow({
   const fill = Math.max(0, headerLabelWidth - nameWidth);
   const leftFill = Math.floor(fill / 2);
   const band = fileBandColor(theme, selected);
+  const glyph = selected ? BAND_GLYPH : LINE_GLYPH;
   const padding = " ".repeat(NAME_PADDING);
 
   return (
@@ -61,10 +64,10 @@ export function DiffFileHeaderRow({
     >
       {/* Clicking the file header jumps the main stream selection without collapsing to a single-file view. */}
       <box style={{ flexDirection: "row" }}>
-        <text fg={band}>{`${BAND_GLYPH.repeat(leftFill)}${padding}`}</text>
+        <text fg={band}>{`${glyph.repeat(leftFill)}${padding}`}</text>
         <text fg={selected ? theme.text : theme.muted}>{filename}</text>
         {stateLabel && <text fg={theme.muted}>{stateLabel}</text>}
-        <text fg={band}>{`${padding}${BAND_GLYPH.repeat(fill - leftFill)}`}</text>
+        <text fg={band}>{`${padding}${glyph.repeat(fill - leftFill)}`}</text>
       </box>
       <box
         style={{

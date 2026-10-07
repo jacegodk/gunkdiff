@@ -678,8 +678,9 @@ describe("UI components", () => {
         const color = (match: (text: string) => boolean) =>
           capturedTestColorToHex(spans.find((span) => match(span.text))?.fg)?.toLowerCase();
         return {
-          band: color((text) => text.includes("█")),
+          band: color((text) => text.includes(selected ? "█" : "─")),
           name: color((text) => text.includes("band.ts")),
+          filled: spans.some((span) => span.text.includes("█")),
         };
       } finally {
         await act(async () => {
@@ -692,7 +693,10 @@ describe("UI components", () => {
     const unselected = await paint(false);
     expect(selected.band).toBe(theme.text.toLowerCase());
     expect(selected.name).toBe(theme.text.toLowerCase());
+    expect(unselected.band).toBeDefined();
     expect(unselected.band).not.toBe(selected.band);
+    // The other files' bands are a thin line, not filled blocks.
+    expect(unselected.filled).toBe(false);
     expect(unselected.name).toBe(theme.muted.toLowerCase());
   });
 
