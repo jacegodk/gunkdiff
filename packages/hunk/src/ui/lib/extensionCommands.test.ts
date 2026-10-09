@@ -88,7 +88,7 @@ describe("buildExtensionAppCommands", () => {
     expect(conflicts).toEqual([]);
     // One command, one dispatch entry, matching either chord.
     expect(commands).toHaveLength(1);
-    expect(commands[0]?.keyLabels).toEqual(["Y", "Ctrl+O"]);
+    expect(commands[0]?.keyLabels).toEqual(["Y", "Ctrl+o"]);
     expect(dispatchAppCommand(commands, chordEvent("Y"))?.id).toBe("meta.toggle");
     expect(dispatchAppCommand(commands, chordEvent("ctrl+o"))?.id).toBe("meta.toggle");
     expect(ran).toEqual(["meta.toggle", "meta.toggle"]);

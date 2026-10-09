@@ -2946,7 +2946,8 @@ describe("App interactions", () => {
       await act(async () => {
         await setup.mockInput.pressEnter();
       });
-      const helpFrame = await waitForFrame(setup, (frame) => frame.includes("Controls help"), 12);
+      // The Help menu item is also called "Controls help"; the dialog's first group proves it opened.
+      const helpFrame = await waitForFrame(setup, (frame) => frame.includes("Move"), 12);
       expect(helpFrame).toContain("Controls help");
       expect(hasLineWithBackground(setup.captureSpans(), "Move", theme.panel)).toBe(true);
     } finally {

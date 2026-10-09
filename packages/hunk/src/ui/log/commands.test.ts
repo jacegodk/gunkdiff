@@ -110,7 +110,7 @@ describe("history command authority", () => {
       resolvedKeys: keys,
     });
     const helpRows = buildHistoryHelpSections(commands).flatMap((section) => section.rows);
-    expect(helpRows).toContainEqual({ keys: "Ctrl+N", description: "next commit" });
+    expect(helpRows).toContainEqual({ keys: "Ctrl+n", description: "next commit" });
     expect(helpRows).toContainEqual({ keys: "v", description: "start visual selection" });
     expect(helpRows).toContainEqual({ keys: "Esc", description: "clear selection" });
     expect(helpRows).toContainEqual({
@@ -121,7 +121,7 @@ describe("history command authority", () => {
       keys: "Shift+Up / K",
       description: "extend selection up",
     });
-    expect(helpRows).toContainEqual({ keys: "Ctrl+T", description: "choose theme" });
+    expect(helpRows).toContainEqual({ keys: "Ctrl+t", description: "choose theme" });
   });
 
   test("remaps and unbinds history independently through the shared keymap", () => {

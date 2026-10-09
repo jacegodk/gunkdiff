@@ -112,14 +112,14 @@ describe("buildHelpSections", () => {
         id: "notes.sync",
         title: "Sync notes",
         keys: ["ctrl+y"],
-        keyLabels: ["Ctrl+Y"],
+        keyLabels: ["Ctrl+y"],
         publicToExtensions: false,
         match: () => false,
         run: () => {},
       },
     ]);
     expect(sections.find((section) => section.title === "Extension notes")?.rows).toEqual([
-      { keys: "Ctrl+Y", description: "Sync notes" },
+      { keys: "Ctrl+y", description: "Sync notes" },
     ]);
   });
 
@@ -161,8 +161,8 @@ describe("buildHelpSections", () => {
       "hunk.app.quit": "ctrl+x",
     });
 
-    expect(keysFor(sections, "previous / next hunk")).toBe("[ / Ctrl+N");
-    expect(keysFor(sections, "quit")).toBe("Ctrl+X");
+    expect(keysFor(sections, "previous / next hunk")).toBe("[ / Ctrl+n");
+    expect(keysFor(sections, "quit")).toBe("Ctrl+x");
   });
 
   test("an unbound command drops out of its row, and an empty row drops out entirely", () => {

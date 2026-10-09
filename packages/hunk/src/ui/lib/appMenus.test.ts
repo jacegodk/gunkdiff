@@ -200,7 +200,7 @@ describe("buildAppMenus", () => {
 
     expect(entry(menus, "view", "Files pane")).toMatchObject({
       commandId: "hunk.view.toggleFilesPane",
-      hint: "Ctrl+B",
+      hint: "Ctrl+b",
     });
     // Unbound by the user, and unbound by declaration: neither advertises a key.
     expect(entry(menus, "file", "Quit").hint).toBeUndefined();

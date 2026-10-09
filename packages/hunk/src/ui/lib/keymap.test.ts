@@ -215,7 +215,7 @@ describe("formatKeyChord", () => {
   test("renders chords the way keyboards label them", () => {
     expect(formatKeyChord("q")).toBe("q");
     expect(formatKeyChord("G")).toBe("G");
-    expect(formatKeyChord("ctrl+m")).toBe("Ctrl+M");
+    expect(formatKeyChord("ctrl+m")).toBe("Ctrl+m");
     expect(formatKeyChord("pageup")).toBe("PageUp");
     expect(formatKeyChord("shift+space")).toBe("Shift+Space");
     expect(formatKeyChord("f10")).toBe("F10");
@@ -224,9 +224,11 @@ describe("formatKeyChord", () => {
   });
 
   test("a shifted letter under another modifier names Shift, so it differs from the plain chord", () => {
-    expect(formatKeyChord("ctrl+shift+p")).toBe("Ctrl+Shift+P");
-    expect(formatKeyChord("ctrl+p")).toBe("Ctrl+P");
-    expect(formatKeyChord("ctrl+alt+shift+v")).toBe("Ctrl+Alt+Shift+V");
+    // gunk: a letter after a modifier is written as typed, lowercase; Shift is spelled out, so a
+    // capital means a bare shifted letter only, the way the single-key rows read (V is Shift+v).
+    expect(formatKeyChord("ctrl+shift+p")).toBe("Ctrl+Shift+p");
+    expect(formatKeyChord("ctrl+p")).toBe("Ctrl+p");
+    expect(formatKeyChord("ctrl+alt+shift+v")).toBe("Ctrl+Alt+Shift+v");
     expect(formatKeyChord("shift+p")).toBe("P");
   });
 

@@ -3892,7 +3892,7 @@ describe("UI components", () => {
       row("w", "line wrap"),
       row("m", "hunk headers"),
       row("M", "menu bar"),
-      row("Ctrl+T", "choose theme"),
+      row("Ctrl+t", "choose theme"),
       row("r", "reload the review"),
       row("F10", "open menus"),
       row("?", "show this help"),
@@ -4017,7 +4017,7 @@ describe("UI components", () => {
       50,
     );
 
-    expect(frame).toContain("Ctrl+X");
+    expect(frame).toContain("Ctrl+x");
     expect(frame).not.toMatch(/q\s+quit/);
   });
 

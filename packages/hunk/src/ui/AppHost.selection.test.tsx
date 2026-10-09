@@ -458,8 +458,8 @@ describe("DiffPane copy selection", () => {
       });
       await flush(setup);
       const selectedFrame = setup.captureCharFrame();
-      expect(selectedFrame).toContain("Ctrl+N Comment");
-      expect(selectedFrame).toContain("Ctrl+X Copy");
+      expect(selectedFrame).toContain("Ctrl+n Comment");
+      expect(selectedFrame).toContain("Ctrl+x Copy");
       expect(selectedFrame).not.toContain("c Comment");
       expect(selectedFrame).not.toContain("y Copy");
 

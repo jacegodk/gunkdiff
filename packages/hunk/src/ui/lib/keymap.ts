@@ -350,10 +350,10 @@ export function formatKeyChord(chord: string): string {
       ? "Shift"
       : undefined,
   ].filter((modifier): modifier is string => modifier !== undefined);
-  // A bare letter is shown exactly as typed ("q"); combined with a modifier it
-  // reads as a named key would ("Ctrl+M"), which is how keyboards label them.
+  // A letter is shown as typed: "q", "Q" for a bare shifted one. gunk: after a modifier it stays
+  // lowercase ("Ctrl+f"), since Shift is then spelled out and a capital would read as Shift.
   const base =
-    isLetter && (parsed.shift || modifiers.length > 0)
+    isLetter && parsed.shift && modifiers.length === 0
       ? parsed.base.toUpperCase()
       : formatChordBase(parsed.base);
 

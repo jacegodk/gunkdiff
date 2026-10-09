@@ -206,7 +206,7 @@ describe("built-in commands under user keybindings", () => {
     expect(dispatchAppCommand(commands, keyEvent({ name: "q", sequence: "q" }))).toBeUndefined();
     expect(ran).toEqual(["requestQuit"]);
     expect(commands.find((command) => command.id === "hunk.app.quit")?.keyLabels).toEqual([
-      "Ctrl+X",
+      "Ctrl+x",
     ]);
   });
 
@@ -349,7 +349,7 @@ describe("commands that ship unbound", () => {
     expect(ran).toEqual(["moveSelection:annotated-file,1"]);
     expect(
       commands.find((command) => command.id === "hunk.review.nextAnnotatedFile")?.keyLabels,
-    ).toEqual(["Ctrl+N"]);
+    ).toEqual(["Ctrl+n"]);
   });
 });
 
