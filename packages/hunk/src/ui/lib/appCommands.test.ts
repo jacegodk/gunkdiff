@@ -15,6 +15,7 @@ import {
 import { APP_COMMAND_CATALOG } from "../../core/run/commandCatalog";
 import { HISTORY_COMMAND_CATALOG } from "../../core/run/historyCommandCatalog";
 import { getBundledUIRegistry } from "../../extensions/default/ui";
+import { GUNK_BUILT_IN_EXTENSIONS } from "../../extensions/default/builtIn";
 import { buildAppMenus } from "./appMenus";
 import { buildHelpSections, HELP_COMMAND_IDS } from "./helpContent";
 import { resolveCommandKeys } from "./keymap";
@@ -467,6 +468,27 @@ describe("observeAppCommandDispatch", () => {
 // shared catalog declares, and the table must present every catalogued command. A command
 // added to one client without a catalog entry fails here instead of forking the vocabulary
 // between the terminal and the browser palette that renders from the same data.
+/**
+ * gunk: the command ids gunk's built-in extensions register, read by running each registration
+ * against a recording stand-in for the extension API, so help may name `hunk-viewed.*` keys.
+ */
+function builtInExtensionCommandIdsForTest(): string[] {
+  const ids: string[] = [];
+  for (const extension of GUNK_BUILT_IN_EXTENSIONS) {
+    const api = new Proxy(
+      {},
+      {
+        get: (_target, property) =>
+          property === "registerCommand"
+            ? (command: { id: string }) => ids.push(`${extension.id}.${command.id}`)
+            : () => {},
+      },
+    );
+    extension.factory(api as never);
+  }
+  return ids;
+}
+
 describe("command catalog parity", () => {
   test("the built-in table is exactly the catalog, in catalog order", () => {
     const { commands } = createTestCommands();
@@ -497,6 +519,7 @@ describe("command catalog parity", () => {
       ...getBundledUIRegistry().commands.map(
         (registered) => `${registered.extensionId}.${registered.command.id}`,
       ),
+      ...builtInExtensionCommandIdsForTest(),
     ]);
     const menus = buildAppMenus({
       commands,

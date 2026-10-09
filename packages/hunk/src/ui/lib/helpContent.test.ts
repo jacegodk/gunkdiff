@@ -42,23 +42,41 @@ describe("buildHelpSections", () => {
   test("renders paired rows from each command's primary key", () => {
     const sections = helpSections();
 
+    // gunk: groups follow the task; the hunk-viewed keys are missing here only because this
+    // command table has no extensions loaded.
     expect(sections.map((section) => section.title)).toEqual([
-      "Navigation",
+      "Move",
+      "Find",
+      "Files",
+      "Hidden lines",
+      "Notes",
+      "Select and copy",
+      "Layout and display",
+      "App",
       "Mouse",
-      "View",
-      "Review",
     ]);
     expect(keysFor(sections, "previous / next hunk")).toBe("[ / ]");
-    expect(keysFor(sections, "half page down / up")).toBe("d / u");
-    expect(keysFor(sections, "move through lines and notes")).toBe("Up / Down");
-    expect(keysFor(sections, "move through hunk lines")).toBe("k / j");
-    expect(keysFor(sections, "toggle / more / less unchanged lines")).toBe("z / x / X");
-    expect(keysFor(sections, "unified / split / auto")).toBe("1 / 2 / 0");
-    expect(keysFor(sections, "lines / wrap / metadata / menu")).toBe("l / w / m / M");
-    expect(keysFor(sections, "annotated hunk / exact note")).toBe("{ / }");
+    expect(keysFor(sections, "half page up / down")).toBe("u / d");
+    expect(keysFor(sections, "one line or note")).toBe("Up / Down");
+    expect(keysFor(sections, "through the hunk's changed lines")).toBe("k / j");
+    expect(keysFor(sections, "previous / next note")).toBe("{ / }");
   });
 
-  test("lists a loaded extension's bound commands in their own section, unbound ones left out", () => {
+  test("gunk: one action per row, so every single key can be found down the key column", () => {
+    const sections = helpSections();
+
+    expect(keysFor(sections, "show or hide handled notes")).toBe("H");
+    expect(keysFor(sections, "show or hide my notes")).toBe("T");
+    expect(keysFor(sections, "show or hide agent notes")).toBe("a");
+    expect(keysFor(sections, "show or hide unchanged lines by the hunk")).toBe("z");
+    expect(keysFor(sections, "10 more lines around the hunk")).toBe("x");
+    expect(keysFor(sections, "10 fewer lines around the hunk")).toBe("X");
+    expect(keysFor(sections, "copy the selection")).toBe("y");
+    expect(keysFor(sections, "unified view")).toBe("1");
+    expect(keysFor(sections, "menu bar")).toBe("M");
+  });
+
+  test("places a curated extension key in its task group, and leaves unbound ones out", () => {
     const sections = buildHelpSections([
       ...helpCommands(),
       {
@@ -80,22 +98,36 @@ describe("buildHelpSections", () => {
         run: () => {},
       },
     ]);
-    const section = sections.find((candidate) => candidate.title === "Viewed files and search");
-    expect(section?.rows).toEqual([
-      { keys: "V", description: "Toggle viewed on the selected file" },
-    ]);
-    // A built-in extension reads as part of the app; bundled UI commands stay in the curated rows.
+    // gunk: a curated built-in extension key sits in its task group, not in a section of its own.
+    expect(keysFor(sections, "mark viewed and fold, or unmark")).toBe("V");
+    expect(sections.map((candidate) => candidate.title)).not.toContain("Viewed files and search");
     expect(sections.map((candidate) => candidate.title)).not.toContain("Extension hunk-viewed");
     expect(sections.map((candidate) => candidate.title)).not.toContain("Extension hunk");
+  });
+
+  test("an installed extension's bound commands still get a section of their own", () => {
+    const sections = buildHelpSections([
+      ...helpCommands(),
+      {
+        id: "notes.sync",
+        title: "Sync notes",
+        keys: ["ctrl+y"],
+        keyLabels: ["Ctrl+Y"],
+        publicToExtensions: false,
+        match: () => false,
+        run: () => {},
+      },
+    ]);
+    expect(sections.find((section) => section.title === "Extension notes")?.rows).toEqual([
+      { keys: "Ctrl+Y", description: "Sync notes" },
+    ]);
   });
 
   test("documents the bundled search keys beside the built-in navigation rows", () => {
     const sections = helpSections();
 
     expect(keysFor(sections, "search diff content")).toBe("/");
-    expect(keysFor(sections, "next / previous search match (notes when not searching)")).toBe(
-      "n / N",
-    );
+    expect(keysFor(sections, "next / previous match (notes when no search)")).toBe("n / N");
     // The filter ships unbound, so its row disappears rather than advertising nothing.
     expect(keysFor(sections, "focus file filter")).toBeUndefined();
   });
@@ -105,9 +137,7 @@ describe("buildHelpSections", () => {
 
     expect(keysFor(sections, "focus file filter")).toBe("/");
     expect(keysFor(sections, "search diff content")).toBeUndefined();
-    expect(keysFor(sections, "next / previous search match (notes when not searching)")).toBe(
-      "n / N",
-    );
+    expect(keysFor(sections, "next / previous match (notes when no search)")).toBe("n / N");
   });
 
   test("a row about one command lists every chord it answers to", () => {

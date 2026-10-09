@@ -36,23 +36,21 @@ export interface HelpSection {
   rows: HelpRow[];
 }
 
+// gunk: one action per row, so every key can be found by reading down the key column; only true
+// pairs (up / down, previous / next) share a row. Groups follow the task, not the code: where you
+// move, what you find, what you do to files, hidden lines, notes, selection, display, the app.
+// The bundled hunk-viewed keys (`hunk-viewed.*`) are curated here too, as part of gunk.
 const HELP_SECTIONS: readonly HelpSectionSpec[] = [
   {
-    title: "Navigation",
+    title: "Move",
     entries: [
       {
         commandIds: ["hunk.review.stepUp", "hunk.review.stepDown"],
-        description: "move through lines and notes",
+        description: "one line or note",
       },
       {
         commandIds: ["hunk.review.stepUpInHunk", "hunk.review.stepDownInHunk"],
-        description: "move through hunk lines",
-      },
-      { commandIds: ["hunk.review.pageDown"], description: "page down" },
-      { commandIds: ["hunk.review.pageUp"], description: "page up" },
-      {
-        commandIds: ["hunk.review.halfPageDown", "hunk.review.halfPageUp"],
-        description: "half page down / up",
+        description: "through the hunk's changed lines",
       },
       {
         commandIds: ["hunk.review.previousHunk", "hunk.review.nextHunk"],
@@ -64,20 +62,120 @@ const HELP_SECTIONS: readonly HelpSectionSpec[] = [
       },
       {
         commandIds: ["hunk.review.previousAnnotatedHunk", "hunk.review.nextAnnotatedHunk"],
-        description: "annotated hunk / exact note",
+        description: "previous / next note",
       },
-      { commandIds: ["hunk.review.findFile"], description: "find a file by name" },
-      { commandIds: ["hunk.search.find"], description: "search diff content" },
+      { commandIds: ["hunk.review.pageUp"], description: "page up" },
+      { commandIds: ["hunk.review.pageDown"], description: "page down" },
       {
-        commandIds: ["hunk.search.next", "hunk.search.previous"],
-        description: "next / previous search match (notes when not searching)",
+        commandIds: ["hunk.review.halfPageUp", "hunk.review.halfPageDown"],
+        description: "half page up / down",
       },
+      { commandIds: ["hunk.review.jumpToTop"], description: "jump to start" },
+      { commandIds: ["hunk.review.jumpToBottom"], description: "jump to end" },
       {
         commandIds: ["hunk.review.scrollCodeLeft", "hunk.review.scrollCodeRight"],
         description: "scroll code sideways (Shift = faster)",
       },
-      { commandIds: ["hunk.review.jumpToTop"], description: "jump to start" },
-      { commandIds: ["hunk.review.jumpToBottom"], description: "jump to end" },
+    ],
+  },
+  {
+    title: "Find",
+    entries: [
+      { commandIds: ["hunk.review.findFile"], description: "find a file by name" },
+      { commandIds: ["hunk.search.find"], description: "search diff content" },
+      {
+        commandIds: ["hunk.search.next", "hunk.search.previous"],
+        description: "next / previous match (notes when no search)",
+      },
+      { commandIds: ["hunk-viewed.search"], description: "search every file's whole source" },
+      { commandIds: ["hunk-viewed.searchNext"], description: "next hit of that search" },
+      { commandIds: ["hunk-viewed.searchPrevious"], description: "previous hit of that search" },
+      { commandIds: ["hunk.review.focusFilter"], description: "focus file filter" },
+      { commandIds: ["hunk.app.toggleFocusArea"], description: "toggle files/filter focus" },
+    ],
+  },
+  {
+    title: "Files",
+    entries: [
+      { commandIds: ["hunk-viewed.toggleViewed"], description: "mark viewed and fold, or unmark" },
+      { commandIds: ["hunk-viewed.skipToUnviewed"], description: "next unviewed file" },
+      {
+        commandIds: ["hunk-viewed.nextUnviewed", "hunk-viewed.previousUnviewed"],
+        description: "next / previous file",
+      },
+      {
+        commandIds: ["hunk-viewed.singleFile"],
+        description: "one file at a time (, . t switch, Esc leaves)",
+      },
+      { commandIds: ["hunk.review.expandFile"], description: "show this file whole" },
+      { commandIds: ["hunk.review.expandAllFiles"], description: "show every file whole" },
+      { commandIds: ["hunk.review.editSelectedFile"], description: "open file in $EDITOR" },
+      { commandIds: ["hunk.view.toggleFilesPane"], description: "show or hide the files pane" },
+      { commandIds: ["hunk-viewed.clearRepo"], description: "clear viewed marks for this repo" },
+    ],
+  },
+  {
+    title: "Hidden lines",
+    entries: [
+      {
+        commandIds: ["hunk.review.toggleHunkGap"],
+        description: "show or hide unchanged lines by the hunk",
+      },
+      {
+        commandIds: ["hunk.review.expandAroundHunk"],
+        description: "10 more lines around the hunk",
+      },
+      {
+        commandIds: ["hunk.review.shrinkAroundHunk"],
+        description: "10 fewer lines around the hunk",
+      },
+    ],
+  },
+  {
+    title: "Notes",
+    entries: [
+      { commandIds: ["hunk.review.startNote"], description: "create review note" },
+      { commandIds: ["hunk.review.editActiveNote"], description: "edit the active note" },
+      { commandIds: ["hunk.review.replyToActiveNote"], description: "reply to the active note" },
+      { commandIds: ["hunk.review.deleteActiveNote"], description: "delete the active note" },
+      {
+        commandIds: ["hunk.review.toggleActiveNoteHandled"],
+        description: "flag the active note handled",
+      },
+      { commandIds: ["hunk.view.toggleAgentNotes"], description: "show or hide agent notes" },
+      { commandIds: ["hunk.view.toggleUserNotes"], description: "show or hide my notes" },
+      { commandIds: ["hunk.view.toggleHandledNotes"], description: "show or hide handled notes" },
+    ],
+  },
+  {
+    title: "Select and copy",
+    entries: [
+      { commandIds: ["hunk.review.startVisualSelection"], description: "select text" },
+      { commandIds: ["hunk.review.copySelection"], description: "copy the selection" },
+    ],
+  },
+  {
+    title: "Layout and display",
+    entries: [
+      { commandIds: ["hunk.view.layoutUnified"], description: "unified view" },
+      { commandIds: ["hunk.view.layoutSplit"], description: "split view" },
+      { commandIds: ["hunk.view.layoutAuto"], description: "auto: split when wide" },
+      { commandIds: ["hunk.view.toggleLineNumbers"], description: "line numbers" },
+      { commandIds: ["hunk.view.toggleLineWrap"], description: "line wrap" },
+      { commandIds: ["hunk.view.toggleHunkHeaders"], description: "hunk headers" },
+      { commandIds: ["hunk.view.toggleMenuBar"], description: "menu bar" },
+      { commandIds: ["hunk.view.openThemeSelector"], description: "choose theme" },
+    ],
+  },
+  {
+    title: "App",
+    entries: [
+      { commandIds: ["hunk.app.refresh"], description: "reload the review" },
+      { commandIds: ["hunk.app.openReviewPicker"], description: "pick worktree / base" },
+      { commandIds: ["hunk.app.openCommitPicker"], description: "pick a commit of this review" },
+      { keys: "F10", description: "open menus" },
+      { commandIds: ["hunk.app.toggleHelp"], description: "show this help" },
+      { commandIds: ["hunk.app.quit"], description: "quit" },
     ],
   },
   {
@@ -85,74 +183,8 @@ const HELP_SECTIONS: readonly HelpSectionSpec[] = [
     entries: [
       { keys: "Wheel", description: "scroll vertically" },
       { keys: "Shift+Wheel", description: "scroll code horizontally" },
-    ],
-  },
-  {
-    title: "View",
-    entries: [
-      {
-        commandIds: ["hunk.view.layoutUnified", "hunk.view.layoutSplit", "hunk.view.layoutAuto"],
-        description: "unified / split / auto",
-      },
-      {
-        commandIds: ["hunk.view.toggleFilesPane", "hunk.view.openThemeSelector"],
-        description: "sidebar / theme selector",
-      },
-      {
-        commandIds: [
-          "hunk.view.toggleAgentNotes",
-          "hunk.view.toggleUserNotes",
-          "hunk.view.toggleHandledNotes",
-        ],
-        description: "toggle AI / my / handled notes",
-      },
-      {
-        commandIds: [
-          "hunk.review.toggleHunkGap",
-          "hunk.review.expandAroundHunk",
-          "hunk.review.shrinkAroundHunk",
-        ],
-        description: "toggle / more / less unchanged lines",
-      },
-      {
-        commandIds: ["hunk.review.expandFile", "hunk.review.expandAllFiles"],
-        description: "show this file / every file whole",
-      },
-      {
-        commandIds: [
-          "hunk.view.toggleLineNumbers",
-          "hunk.view.toggleLineWrap",
-          "hunk.view.toggleHunkHeaders",
-          "hunk.view.toggleMenuBar",
-        ],
-        description: "lines / wrap / metadata / menu",
-      },
-      { commandIds: ["hunk.review.editSelectedFile"], description: "open file in $EDITOR" },
-    ],
-  },
-  {
-    title: "Review",
-    entries: [
-      { commandIds: ["hunk.review.focusFilter"], description: "focus file filter" },
-      { commandIds: ["hunk.review.startNote"], description: "create review note" },
-      // Copy (`y`) is enabled only while a selection exists, so it is named in the text.
-      { commandIds: ["hunk.review.startVisualSelection"], description: "select text (y copies)" },
-      {
-        commandIds: [
-          "hunk.review.editActiveNote",
-          "hunk.review.replyToActiveNote",
-          "hunk.review.deleteActiveNote",
-          "hunk.review.toggleActiveNoteHandled",
-        ],
-        description: "on the active note",
-      },
-      { commandIds: ["hunk.app.toggleFocusArea"], description: "toggle files/filter focus" },
-      { keys: "F10", description: "open menus" },
-      { commandIds: ["hunk.app.refresh"], description: "reload the review" },
-      { commandIds: ["hunk.app.openReviewPicker"], description: "pick worktree / base" },
-      { commandIds: ["hunk.app.openCommitPicker"], description: "pick a commit of this review" },
-      { commandIds: ["hunk.app.toggleHelp"], description: "show this help" },
-      { commandIds: ["hunk.app.quit"], description: "quit" },
+      { keys: "Click header", description: "select that file" },
+      { keys: "Click ▼ / ▲", description: "show hidden lines from that end" },
     ],
   },
 ];
@@ -210,6 +242,8 @@ function extensionHelpSections(commands: readonly AppCommand[]): HelpSection[] {
   for (const command of commands) {
     const owner = command.id.slice(0, command.id.indexOf("."));
     if (owner === "" || owner === "hunk" || command.keyLabels.length === 0) continue;
+    // gunk: a command curated above already has its row.
+    if (HELP_COMMAND_IDS.includes(command.id)) continue;
     const rows = byExtension.get(owner) ?? [];
     rows.push({ keys: command.keyLabels.join(" / "), description: command.title });
     byExtension.set(owner, rows);

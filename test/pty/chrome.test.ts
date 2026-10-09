@@ -89,13 +89,13 @@ describe("PTY chrome", () => {
       });
 
       await harness.clickAndWaitForText(session, /Help/, /Controls help/, { timeout: 5_000 });
-      const helpDialog = await harness.clickAndWaitForText(session, /Controls help/, /Navigation/, {
+      const helpDialog = await harness.clickAndWaitForText(session, /Controls help/, /Move/, {
         timeout: 5_000,
       });
 
       // The key column is rendered from the commands' resolved chords. Asserted on a row the
       // 20-row dialog shows without scrolling.
-      expect(helpDialog).toContain("d / u");
+      expect(helpDialog).toContain("u / d");
     } finally {
       session.close();
     }
@@ -296,12 +296,12 @@ describe("PTY chrome", () => {
         "?",
         (text) =>
           (text.includes("Keyboard help") || text.includes("Controls help")) &&
-          text.includes("move through lines and notes"),
+          text.includes("one line or note"),
         5_000,
       );
 
       expect(help.includes("Keyboard help") || help.includes("Controls help")).toBe(true);
-      expect(help).toContain("move through lines and notes");
+      expect(help).toContain("one line or note");
     } finally {
       session.close();
     }

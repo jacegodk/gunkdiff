@@ -2946,9 +2946,9 @@ describe("App interactions", () => {
       await act(async () => {
         await setup.mockInput.pressEnter();
       });
-      const helpFrame = await waitForFrame(setup, (frame) => frame.includes("Navigation"), 12);
+      const helpFrame = await waitForFrame(setup, (frame) => frame.includes("Controls help"), 12);
       expect(helpFrame).toContain("Controls help");
-      expect(hasLineWithBackground(setup.captureSpans(), "Navigation", theme.panel)).toBe(true);
+      expect(hasLineWithBackground(setup.captureSpans(), "Move", theme.panel)).toBe(true);
     } finally {
       await act(async () => {
         setup.renderer.destroy();

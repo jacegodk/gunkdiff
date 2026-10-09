@@ -3840,66 +3840,88 @@ describe("UI components", () => {
     const frame = await captureFrame(
       <HelpDialog
         commands={builtinCommandMatchProbes()}
-        terminalHeight={46}
-        terminalWidth={76}
+        terminalHeight={50}
+        terminalWidth={180}
         theme={theme}
         onClose={() => {}}
       />,
-      76,
-      46,
+      180,
+      50,
     );
 
+    // One action per row; the key column is as wide as the longest key plus one.
+    const keyWidth = "PageUp / b / Shift+Space".length + 1;
+    const row = (keys: string, description: string) => `${keys.padEnd(keyWidth)}${description}`;
     const expectedRows = [
       "Controls help",
       "[Esc]",
-      "Navigation",
-      "Up / Down                move through lines and notes",
-      "k / j                    move through hunk lines",
-      "PageDown / Space / f     page down",
-      "PageUp / b / Shift+Space page up",
-      "d / u                    half page down / up",
-      "[ / ]                    previous / next hunk",
-      ", / .                    previous / next file",
-      "{ / }                    annotated hunk / exact note",
-      "t                        find a file by name",
-      "Left / Right             scroll code sideways (Shift = faster)",
-      "g / Home                 jump to start",
-      "G / End                  jump to end",
-      "Mouse",
-      "Wheel                    scroll vertically",
-      "Shift+Wheel              scroll code horizontally",
-      "View",
-      "1 / 2 / 0                unified / split / auto",
-      "s / Ctrl+T               sidebar / theme selector",
-      "a / T / H                toggle AI / my / handled notes",
-      "E / R / D / h            on the active note",
-      "z / x / X                toggle / more / less unchanged lines",
-      "l / w / m / M            lines / wrap / metadata / menu",
-      "e                        open file in $EDITOR",
-      "Review",
-      "c                        create review note",
-      "v                        select text (y copies)",
-      "Tab                      toggle files/filter focus",
-      "F10                      open menus",
-      "r                        reload the review",
-      "?                        show this help",
-      "q                        quit",
-    ] as const;
+      row("Up / Down", "one line or note"),
+      row("k / j", "through the hunk's changed lines"),
+      row("[ / ]", "previous / next hunk"),
+      row(", / .", "previous / next file"),
+      row("{ / }", "previous / next note"),
+      row("PageUp / b / Shift+Space", "page up"),
+      row("PageDown / Space / f", "page down"),
+      row("u / d", "half page up / down"),
+      row("g / Home", "jump to start"),
+      row("G / End", "jump to end"),
+      row("Left / Right", "scroll code sideways (Shift = faster)"),
+      row("t", "find a file by name"),
+      row("Tab", "toggle files/filter focus"),
+      row("F", "show this file whole"),
+      row("A", "show every file whole"),
+      row("e", "open file in $EDITOR"),
+      row("s", "show or hide the files pane"),
+      row("z", "show or hide unchanged lines by the hunk"),
+      row("x", "10 more lines around the hunk"),
+      row("X", "10 fewer lines around the hunk"),
+      row("c", "create review note"),
+      row("E", "edit the active note"),
+      row("R", "reply to the active note"),
+      row("D", "delete the active note"),
+      row("h", "flag the active note handled"),
+      row("a", "show or hide agent notes"),
+      row("T", "show or hide my notes"),
+      row("H", "show or hide handled notes"),
+      row("v", "select text"),
+      row("y", "copy the selection"),
+      row("1", "unified view"),
+      row("2", "split view"),
+      row("0", "auto: split when wide"),
+      row("l", "line numbers"),
+      row("w", "line wrap"),
+      row("m", "hunk headers"),
+      row("M", "menu bar"),
+      row("Ctrl+T", "choose theme"),
+      row("r", "reload the review"),
+      row("F10", "open menus"),
+      row("?", "show this help"),
+      row("q", "quit"),
+      row("Wheel", "scroll vertically"),
+      row("Shift+Wheel", "scroll code horizontally"),
+    ];
 
     for (const expectedRow of expectedRows) {
       expect(frame).toContain(expectedRow);
     }
 
+    // A wide terminal gets two columns, so one line carries two group titles side by side.
+    const titles = [
+      "Move",
+      "Find",
+      "Files",
+      "Hidden lines",
+      "Notes",
+      "Select and copy",
+      "Layout and display",
+      "App",
+      "Mouse",
+    ];
     const lines = frame.split("\n");
-    const blankModalRow = /│\s+│/;
-    const mouseHeaderIndex = lines.findIndex((line) => line.includes("│ Mouse"));
-    const viewHeaderIndex = lines.findIndex((line) => line.includes("│ View"));
-    const reviewHeaderIndex = lines.findIndex((line) => line.includes("│ Review"));
-
-    expect(lines[mouseHeaderIndex - 1]).toMatch(blankModalRow);
-    expect(lines[viewHeaderIndex - 1]).toMatch(blankModalRow);
-    expect(lines[reviewHeaderIndex - 1]).toMatch(blankModalRow);
-    expect(frame).not.toContain("linese/Awrapt/smetadata");
+    const titleCount = (line: string) =>
+      titles.filter((title) => new RegExp(`(^|\\s)${title}(\\s|$)`).test(line.replaceAll("│", " ")))
+        .length;
+    expect(lines.some((line) => titleCount(line) === 2)).toBe(true);
   });
 
   test("HelpDialog renders surface-supplied sections without review controls", async () => {
@@ -3986,13 +4008,13 @@ describe("UI components", () => {
     const frame = await captureFrame(
       <HelpDialog
         commands={builtinCommandMatchProbes(keys)}
-        terminalHeight={46}
-        terminalWidth={76}
+        terminalHeight={50}
+        terminalWidth={180}
         theme={theme}
         onClose={() => {}}
       />,
-      76,
-      46,
+      180,
+      50,
     );
 
     expect(frame).toContain("Ctrl+X");
