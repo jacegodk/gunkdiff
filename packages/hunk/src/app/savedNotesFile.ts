@@ -3,8 +3,16 @@
  * this module owns the path scheme and the atomic read-merge-write on disk.
  */
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, isAbsolute, join } from "node:path";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  watch,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, isAbsolute, join } from "node:path";
 import {
   SAVED_NOTES_TTL_MS,
   type SavedNote,
@@ -89,5 +97,39 @@ export function mergeSavedNotes(
     }
     rmSync(staged, { force: true });
     throw error;
+  }
+}
+
+/**
+ * gunk: call `onChange` (debounced) whenever the notes file is written or replaced, by this
+ * session, another window, or an agent flagging a note with jq. Watches the folder, since a
+ * `mv tmp file` replace swaps the file itself. Returns the stop function; a folder that cannot
+ * be watched logs once and leaves the notes as they were read at open.
+ */
+export function watchSavedNotes(
+  filePath: string,
+  onChange: () => void,
+  log: (message: string) => void,
+): () => void {
+  const folder = dirname(filePath);
+  const name = basename(filePath);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    mkdirSync(folder, { recursive: true });
+    const watcher = watch(folder, (_event, changed) => {
+      if (changed !== null && changed !== name) return;
+      clearTimeout(timer);
+      timer = setTimeout(onChange, 50);
+    });
+    watcher.on("error", (error) => log(`gunk: stopped watching ${filePath}: ${error.message}`));
+    return () => {
+      clearTimeout(timer);
+      watcher.close();
+    };
+  } catch (error) {
+    log(
+      `gunk: cannot watch ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return () => {};
   }
 }

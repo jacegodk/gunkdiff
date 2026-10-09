@@ -213,6 +213,58 @@ describe("saved review notes", () => {
     }
   });
 
+  test("a handled flag written to the notes file while gunk runs hides the note at once", async () => {
+    const dir = createRepo();
+    const notesPath = resolveSavedNotesPath(join(stateHome, "hunk"), dir, "main");
+    mkdirSync(dirname(notesPath), { recursive: true });
+    const note = {
+      id: "user:1",
+      filePath: "alpha.ts",
+      hunkIndex: 0,
+      side: "new",
+      line: 2,
+      body: "flag me from outside",
+      at: new Date().toISOString(),
+    };
+    const write = (handled: boolean) =>
+      writeFileSync(
+        notesPath,
+        JSON.stringify({
+          version: 1,
+          worktree: dir,
+          branch: "main",
+          notes: { "user:1": handled ? { ...note, handled: true } : note },
+        }),
+      );
+    write(false);
+    const bootstrap = await loadAppBootstrap(
+      { kind: "vcs", staged: false, options: { mode: "unified", excludeUntracked: true } },
+      { cwd: dir, vcsCatalog: getBundledVcsCatalog() },
+    );
+    const setup = await testRender(<AppHost bootstrap={bootstrap} />, { width: 120, height: 30 });
+    try {
+      let frame = await waitForFrame(setup, (f) => f.includes("flag me from outside"));
+      expect(frame).toContain("flag me from outside");
+
+      // Another session flags it, the way an agent does with jq.
+      write(true);
+      frame = await waitForFrame(setup, (f) => !f.includes("flag me from outside"));
+      expect(frame).not.toContain("flag me from outside");
+
+      // H shows it again, marked handled.
+      await act(async () => {
+        await setup.mockInput.typeText("H");
+      });
+      frame = await waitForFrame(setup, (f) => /Your note · \S+ · handled/.test(f));
+      expect(frame).toMatch(/Your note · \S+ · handled/);
+    } finally {
+      await act(async () => {
+        setup.renderer.destroy();
+      });
+      await removeTestDirectory(dir);
+    }
+  });
+
   test("h flags the active note handled and writes the flag to the notes file, h again clears it", async () => {
     const dir = createRepo();
     const notesPath = resolveSavedNotesPath(join(stateHome, "hunk"), dir, "main");

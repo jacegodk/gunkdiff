@@ -6,9 +6,11 @@ import {
   readSavedNotes,
   resolveNotesStateDir,
   resolveSavedNotesPath,
+  watchSavedNotes,
 } from "../../app/savedNotesFile";
 import {
   diffSavedNotes,
+  HANDLED_NOTE_TAG,
   restoreSavedNotes,
   savedNoteFromStored,
   type SavedNote,
@@ -117,4 +119,29 @@ export function useSavedReviewNotes({
     persist();
     return store.subscribe(persist);
   }, [deleteHandledNotes, documentGeneration, identity, log, onNotice, stateDir, store]);
+
+  // gunk: another session (an agent with jq, a second window) can flag a note handled in the file
+  // while this one runs; apply those flags to the notes on screen. Only the flag is taken over:
+  // added or deleted notes still arrive on the next open. Applying a flag saves it back
+  // unchanged, so the write this causes finds nothing more to apply.
+  useEffect(() => {
+    if (!identity) return;
+    const filePath = resolveSavedNotesPath(stateDir, identity.worktree, identity.branch);
+    return watchSavedNotes(
+      filePath,
+      () => {
+        const flags = new Map(
+          readSavedNotes(filePath, log).map((note) => [note.id, note.handled === true]),
+        );
+        for (const entry of store.getSnapshot().userNotes) {
+          const handled = flags.get(entry.note.id);
+          if (handled === undefined) continue;
+          if (handled !== (entry.note.tags?.includes(HANDLED_NOTE_TAG) ?? false)) {
+            store.dispatch({ type: "notes/set-handled", noteId: entry.note.id, handled });
+          }
+        }
+      },
+      log,
+    );
+  }, [identity, log, stateDir, store]);
 }
