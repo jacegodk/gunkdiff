@@ -48,6 +48,7 @@ import { MenuBar } from "./components/chrome/MenuBar";
 import { ConfirmDialog, confirmDialogHeight } from "./components/chrome/ConfirmDialog";
 import { ExtensionDialog } from "./components/chrome/ExtensionDialog";
 import { ReviewPickerDialog } from "./components/chrome/ReviewPickerDialog";
+import { CommitEditDialog } from "./components/chrome/CommitEditDialog";
 import { FileFinderDialog } from "./components/chrome/FileFinderDialog";
 import { ViewPreferenceQuitDialog } from "./components/chrome/ViewPreferenceQuitDialog";
 import { ExtensionToast } from "./components/chrome/ExtensionToast";
@@ -86,6 +87,7 @@ import { resolveCanonicalPath } from "../core/run/paths";
 import { useReviewPickerController } from "./hooks/useReviewPickerController";
 import { useSavedReviewNotes } from "./hooks/useSavedReviewNotes";
 import { useThemeSelectorController } from "./hooks/useThemeSelectorController";
+import { useCommitEditController } from "./hooks/useCommitEditController";
 import { useFileFinderController } from "./hooks/useFileFinderController";
 import { reviewPickerApplies } from "./reviewPicker";
 import { useTimedNotice } from "./hooks/useTimedNotice";
@@ -128,6 +130,7 @@ import {
 import { HUNK_FILES_PANE_KEY } from "../extensions/extensionIds";
 import { maxFileHeaderStatsWidth } from "./lib/fileHeader";
 import { setMouseCapture } from "./lib/mouseCapture";
+import { fileHasUncommittedEdit, reviewEndsAtCommit } from "./lib/commitEdit";
 import { openSelectedFileInEditor } from "./lib/openInEditor";
 import { resolveResponsiveLayout } from "./lib/responsive";
 import type { WorkspaceRefreshRequest } from "./currentReviewRefresh";
@@ -1208,6 +1211,14 @@ export function App({
     showNotice: showSessionNotice,
   });
 
+  const refreshAfterCommit = useCallback(() => {
+    if (canRefreshCurrentInput) {
+      triggerRefreshCurrentInput();
+    }
+  }, [canRefreshCurrentInput, triggerRefreshCurrentInput]);
+  const { commitEdit, acceptCommitEdit, closeCommitEdit, openCommitEdit, setCommitEditMessage } =
+    useCommitEditController({ onCommitted: refreshAfterCommit, showNotice: showSessionNotice });
+
   const triggerEditSelectedFile = useCallback(() => {
     const basePath = isVcsReviewInput(bootstrap.input)
       ? bootstrap.changeset.sourceLabel
@@ -1225,14 +1236,24 @@ export function App({
       return;
     }
 
+    // gunk: a save cannot show in a review that ends at a commit; offer to commit it instead.
+    if (basePath && selectedFile && reviewEndsAtCommit(bootstrap.input)) {
+      const path = selectedFile.path;
+      void fileHasUncommittedEdit(basePath, path).then((edited) => {
+        if (edited) openCommitEdit(basePath, path);
+      });
+      return;
+    }
+
     if (canRefreshCurrentInput) {
       triggerRefreshCurrentInput();
     }
   }, [
     activeLineCursor,
     bootstrap.changeset.sourceLabel,
-    bootstrap.input.kind,
+    bootstrap.input,
     canRefreshCurrentInput,
+    openCommitEdit,
     renderer,
     review.selectedHunk,
     selectedFile,
@@ -1575,6 +1596,10 @@ export function App({
     closeFileFinder,
     moveFileFinder,
     setFileFinderQuery,
+    commitEditOpen: commitEdit !== null,
+    acceptCommitEdit,
+    closeCommitEdit,
+    setCommitEditMessage,
     saveConfigPromptOpen,
     saveViewPreferencesAndQuit,
     discardViewPreferencesAndQuit,
@@ -1986,6 +2011,17 @@ export function App({
           onAcceptItem={acceptReviewPickerItem}
           onClose={closeReviewPicker}
           onSelectItem={selectReviewPickerItem}
+        />
+      ) : null}
+
+      {commitEdit ? (
+        <CommitEditDialog
+          state={commitEdit}
+          terminalHeight={terminal.height}
+          terminalWidth={terminal.width}
+          theme={baseTheme}
+          onAccept={acceptCommitEdit}
+          onClose={closeCommitEdit}
         />
       ) : null}
 

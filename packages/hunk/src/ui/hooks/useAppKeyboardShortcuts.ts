@@ -40,6 +40,10 @@ export interface UseAppKeyboardShortcutsOptions {
   closeFileFinder: () => void;
   moveFileFinder: (delta: number) => void;
   setFileFinderQuery: (update: (query: string) => string) => void;
+  commitEditOpen: boolean;
+  acceptCommitEdit: () => void;
+  closeCommitEdit: () => void;
+  setCommitEditMessage: (update: (message: string) => string) => void;
   closeExtensionTrustPrompt: () => void;
   /**
    * Every app-level shortcut, built-in and extension-contributed, in dispatch
@@ -148,6 +152,10 @@ export function useAppKeyboardShortcuts({
   closeFileFinder,
   moveFileFinder,
   setFileFinderQuery,
+  commitEditOpen,
+  acceptCommitEdit,
+  closeCommitEdit,
+  setCommitEditMessage,
   saveConfigPromptOpen,
   saveViewPreferencesAndQuit,
   discardViewPreferencesAndQuit,
@@ -172,6 +180,7 @@ export function useAppKeyboardShortcuts({
   const themeSelectorOpenRef = useRef(themeSelectorOpen);
   const reviewPickerOpenRef = useRef(reviewPickerOpen);
   const fileFinderOpenRef = useRef(fileFinderOpen);
+  const commitEditOpenRef = useRef(commitEditOpen);
   const extensionTrustPromptOpenRef = useRef(extensionTrustPromptOpen);
   const extensionDialogRef = useRef(extensionDialog);
   // The mode callbacks read live App state (which mode is running, its context),
@@ -199,6 +208,7 @@ export function useAppKeyboardShortcuts({
   themeSelectorOpenRef.current = themeSelectorOpen;
   reviewPickerOpenRef.current = reviewPickerOpen;
   fileFinderOpenRef.current = fileFinderOpen;
+  commitEditOpenRef.current = commitEditOpen;
   extensionTrustPromptOpenRef.current = extensionTrustPromptOpen;
   extensionDialogRef.current = extensionDialog;
   isFileViewModeActiveRef.current = isFileViewModeActive;
@@ -471,6 +481,33 @@ export function useAppKeyboardShortcuts({
   };
 
   /**
+   * gunk: own every key while the commit prompt is up. Enter commits, Esc keeps the edit
+   * uncommitted, Backspace and printable keys edit the message.
+   */
+  const handleCommitEditShortcut = (key: KeyEvent): KeyOwner => {
+    if (!commitEditOpenRef.current) {
+      return "notMine";
+    }
+
+    if (isEscapeKey(key)) {
+      closeCommitEdit();
+    } else if (key.name === "return" || key.name === "enter") {
+      acceptCommitEdit();
+    } else if (key.name === "backspace") {
+      setCommitEditMessage((message) => message.slice(0, -1));
+    } else if (
+      !key.ctrl &&
+      !key.meta &&
+      key.sequence.length === 1 &&
+      key.sequence >= " " &&
+      key.sequence !== "\x7f"
+    ) {
+      setCommitEditMessage((message) => message + key.sequence);
+    }
+    return "mine";
+  };
+
+  /**
    * gunk: own every key while the file finder is up. Arrows and Tab move the highlight, Enter
    * jumps, Esc closes, Backspace edits, and any other printable key types into the query, so
    * letters such as `j` or `t` never reach the review behind it.
@@ -696,6 +733,7 @@ export function useAppKeyboardShortcuts({
         handleThemeSelectorShortcut,
         handleReviewPickerShortcut,
         handleFileFinderShortcut,
+        handleCommitEditShortcut,
         handleMenuShortcut,
       ],
       key,
