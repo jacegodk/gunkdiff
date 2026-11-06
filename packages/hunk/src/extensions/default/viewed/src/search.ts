@@ -13,6 +13,9 @@ export interface SearchHit {
   hidden?: true;
 }
 
+/** gunk: what a search scans: each file's whole source, or only the lines the diff carries. */
+export type SearchScope = "source" | "diff";
+
 /** Content-search state: the active query, its merged hits, the current pick, and the prompt. */
 export interface SearchState {
   /** Empty string means no search is active. */
@@ -22,6 +25,8 @@ export interface SearchState {
   /** Index into `hits` of the current pick; -1 when there are none. */
   currentIndex: number;
   prompt: { open: boolean; draft: string };
+  /** gunk: Tab in the prompt switches it; it outlives a cleared search. */
+  scope: SearchScope;
 }
 
 const initialState: SearchState = {
@@ -29,6 +34,7 @@ const initialState: SearchState = {
   hits: [],
   currentIndex: -1,
   prompt: { open: false, draft: "" },
+  scope: "source",
 };
 
 let state: SearchState = initialState;
@@ -150,6 +156,11 @@ export function editDraft(next: string): void {
   publish({ prompt: { ...state.prompt, draft: next } });
 }
 
+/** gunk: switch between searching whole sources and only the diff. */
+export function toggleSearchScope(): void {
+  publish({ scope: state.scope === "source" ? "diff" : "source" });
+}
+
 /** Close the prompt, keeping its draft. */
 export function closePrompt(): void {
   publish({ prompt: { ...state.prompt, open: false } });
@@ -186,13 +197,13 @@ export function hasSearchDocument(file: Pick<ExtensionDiffFile, "id" | "patch">)
  * Every line of the source is searched, so a match in unchanged code is found whether or not it
  * is on screen; the ones the patch does not carry are marked `hidden`, and the caller opens the
  * file before revealing one. Without a source (binary, too large, a piped patch) the patch is
- * still scanned, exactly as before.
+ * still scanned, exactly as before. The "diff" scope scans only the patch.
  */
 export function scanFileHits(
   file: Pick<ExtensionDiffFile, "id" | "path" | "patch">,
   query: string,
 ): SearchHit[] {
-  if (!hasSearchDocument(file)) return scanPatchHits(file, query);
+  if (state.scope === "diff" || !hasSearchDocument(file)) return scanPatchHits(file, query);
   const document = documents.get(file.id)!.text;
 
   const shown = new Set(

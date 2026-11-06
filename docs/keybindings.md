@@ -23,8 +23,8 @@ Rules worth knowing:
 - **User bindings replace defaults.** Listing chords for a command is the
   complete set of keys it answers to, not an addition to the shipped ones.
 - **A key you bind is yours.** Any command that held the same chord only as a
-  default gives it up, keeping its other keys. Above, `hunk.search.find` hands
-  `/` to the filter while `n` / `N` still step search matches.
+  default gives it up, keeping its other keys. Above, `hunk-viewed.search` hands
+  `/` to the filter while `ctrl+f` still opens the search.
 - **`false` (or `[]`) unbinds a command**, leaving its keys doing nothing.
 - **Unbound commands are one line away.** The file filter ships without a key
   (Tab and the File menu reach it), as do `hunk.review.nextNote` /
@@ -157,7 +157,7 @@ Review and shared commands:
 | `hunk.review.stepUpInHunk`                     | Move up one hunk line, skipping unchanged context     | `k`                          |
 | `hunk.review.toggleActiveNoteHandled`          | Flag active review note handled                       | `h`                          |
 | `hunk.review.toggleHunkGap`                    | Expand or collapse the selected context               | `z`                          |
-| `hunk.search.find`                             | Search diff content                                   | `/`                          |
+| `hunk.search.find`                             | Search diff content                                   | _(none)_                     |
 | `hunk.search.next`                             | Next search match, or note                            | `n`                          |
 | `hunk.search.previous`                         | Previous search match, or note                        | `N`                          |
 | `hunk.view.applyFilePresentationToAllMatching` | Apply current file presentation to all matches        | _(none)_                     |

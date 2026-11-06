@@ -80,6 +80,8 @@ async function launchWithoutExtensions(repo: string): Promise<AppBootstrap> {
     cwd: repo,
   });
   expect(bootstrap.extensions.registry.commands).toEqual([]);
+  // gunk ships this search unbound (`/` opens the hunk-viewed search), so bind it here.
+  bootstrap.keybindings = { ...bootstrap.keybindings, "hunk.search.find": "/" };
   return bootstrap;
 }
 

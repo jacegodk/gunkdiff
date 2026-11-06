@@ -336,9 +336,6 @@ describe("the Extensions menu", () => {
       ["Next hunk", "]"],
       ["Previous comment", "{"],
       ["Next comment", "}"],
-      ["Search diff content…", "/"],
-      ["Next match", "n"],
-      ["Previous match", "N"],
       ["Find file…", "t"],
       ["Focus filter", undefined],
     ]);

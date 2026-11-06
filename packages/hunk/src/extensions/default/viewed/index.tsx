@@ -62,6 +62,7 @@ import {
   setSearchDocument,
   type SearchHit,
   stepHit,
+  toggleSearchScope,
 } from "./src/search";
 import {
   applySingleFileTransform,
@@ -186,7 +187,7 @@ async function loadSearchDocuments(ctx: ExtensionCommandContext): Promise<void> 
 /** Apply a submitted query: rebuild hits, refresh presentation, and reveal (or notice) the first pick. */
 async function applySearch(ctx: ExtensionCommandContext, query: string): Promise<void> {
   setQuery(query);
-  await loadSearchDocuments(ctx);
+  if (getSearchState().scope === "source") await loadSearchDocuments(ctx);
   rebuildVisibleHits();
   ctx.highlights.refresh(SEARCH_HIGHLIGHTER_ID);
   const hit = currentHit();
@@ -236,7 +237,13 @@ function applyClear(
  * Search answers for the whole file, so a pick can land in unchanged code the diff is still
  * hiding; showing the file whole is what makes that line exist on screen.
  */
-async function revealHit(ctx: ExtensionCommandContext, hit: SearchHit): Promise<void> {
+/** gunk: what stepping to a hit needs; a keyboard mode (`n` / `N`) supplies it too. */
+type HitStepContext = Pick<
+  ExtensionCommandContext,
+  "commands" | "highlights" | "navigation" | "notify"
+>;
+
+async function revealHit(ctx: HitStepContext, hit: SearchHit): Promise<void> {
   let fileId = hit.fileId;
   let navigation = ctx.navigation;
   // gunk: in single-file mode a hit in another file switches the view to that file first.
@@ -266,7 +273,7 @@ async function revealHit(ctx: ExtensionCommandContext, hit: SearchHit): Promise<
  * hit left, the hit landed on — a file can be both, or the two can differ, or there can be just
  * one when there was no previous pick), and revealing the new pick; notices ends and wraps.
  */
-async function moveHit(ctx: ExtensionCommandContext, direction: 1 | -1): Promise<void> {
+async function moveHit(ctx: HitStepContext, direction: 1 | -1): Promise<void> {
   const previous = currentHit();
   const step = stepHit(direction);
   if (!step) {
@@ -806,6 +813,10 @@ export default function (hunk: HunkExtensionAPI) {
         editDraft(getSearchState().prompt.draft.slice(0, -1));
         return "handled";
       }
+      if (matchesKey("tab", key)) {
+        toggleSearchScope();
+        return "handled";
+      }
       if (
         key.sequence &&
         !key.ctrl &&
@@ -829,8 +840,28 @@ export default function (hunk: HunkExtensionAPI) {
   hunk.registerKeyboardMode({
     id: SEARCH_ACTIVE_MODE_ID,
     title: "Search",
-    // gunk: a search on top of single-file mode keeps that mode's keys.
-    onKey: (key, ctx) => (getSingleFileState().active ? singleFileKey(key, ctx) : "pass"),
+    // gunk: `n` / `N` step this search's hits (with no search they step notes); a search on top
+    // of single-file mode keeps that mode's other keys.
+    onKey: (key, ctx) => {
+      const direction = matchesKey("n", key) ? 1 : matchesKey("N", key) ? -1 : 0;
+      if (direction !== 0) {
+        // A mode carries no navigation; the latest review's context does, the search's as backup.
+        const navigation = liveReviewCtx?.navigation ?? searchCtx?.navigation;
+        if (navigation) {
+          void moveHit(
+            {
+              commands: ctx.commands,
+              highlights: ctx.highlights,
+              navigation,
+              notify: (message, type) => ctx.notify(message, type),
+            },
+            direction,
+          );
+        }
+        return "handled";
+      }
+      return getSingleFileState().active ? singleFileKey(key, ctx) : "pass";
+    },
     // Esc (host-owned) or a replacement by another mode lands here: the search is over. The
     // command context that started it still holds the controls that take its marks and bar down.
     onExit(modeCtx) {
@@ -845,7 +876,7 @@ export default function (hunk: HunkExtensionAPI) {
     },
   });
 
-  hunk.registerCommand({ id: "search", title: "Search", key: ["ctrl+f", "f3"] }, (ctx) => {
+  hunk.registerCommand({ id: "search", title: "Search", key: ["ctrl+f", "f3", "/"] }, (ctx) => {
     if (getSearchState().query !== "") {
       moveHit(ctx, 1);
       return;

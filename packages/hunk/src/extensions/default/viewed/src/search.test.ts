@@ -17,6 +17,7 @@ import {
   setQuery,
   setSearchDocument,
   stepHit,
+  toggleSearchScope,
 } from "./search";
 
 function file(id: string, path: string, patch: string): ExtensionDiffFile {
@@ -117,6 +118,16 @@ describe("scanFileHits", () => {
     const reloaded = file("f1", "a.ts", "@@ -9,1 +9,1 @@\n-x\n+foo nine\n");
     expect(hasSearchDocument(reloaded)).toBe(false);
     expect(scanFileHits(reloaded, "foo")).toEqual(scanPatchHits(reloaded, "foo"));
+  });
+
+  test("the diff scope scans only the patch, even with a source read", () => {
+    const f = file("f1", "a.ts", patch);
+    setSearchDocument(f, source);
+    toggleSearchScope();
+    expect(getSearchState().scope).toBe("diff");
+    expect(scanFileHits(f, "foo")).toEqual(scanPatchHits(f, "foo"));
+    toggleSearchScope();
+    expect(scanFileHits(f, "foo")).toHaveLength(2);
   });
 
   test("pruneSearchFiles drops the source of a file the new changeset lost", () => {
@@ -255,15 +266,17 @@ describe("stepHit", () => {
 });
 
 describe("clearSearch", () => {
-  test("resets query/hits/index/prompt but keeps fullViewFileIds", () => {
+  test("resets query/hits/index/prompt but keeps the scope", () => {
     openPrompt("foo");
     setQuery("foo");
+    toggleSearchScope();
     clearSearch();
     expect(getSearchState()).toEqual({
       query: "",
       hits: [],
       currentIndex: -1,
       prompt: { open: false, draft: "" },
+      scope: "diff",
     });
   });
 });

@@ -11,10 +11,11 @@ import { fitText, fitTextTail, padText, textWidth } from "./text";
 
 /** Render the bottom-bar search row. */
 export function SearchBar({ theme, width }: ExtensionPaneProps): ReactNode {
-  const { prompt, query, hits, currentIndex } = useSearchState();
+  const { prompt, query, hits, currentIndex, scope } = useSearchState();
+  const scopeLabel = scope === "source" ? "all source" : "diff only";
 
   if (prompt.open) {
-    const label = "Search: ";
+    const label = `Search ${scopeLabel} (tab switches): `;
     const contentWidth = Math.max(0, width - textWidth(label));
     // Keep the tail (not the head) of the draft + cursor: a draft longer than the available
     // space must still show the cursor glyph, not have it truncated away at the far end.
@@ -32,8 +33,11 @@ export function SearchBar({ theme, width }: ExtensionPaneProps): ReactNode {
   const location = hit ? `${basename(hit.filePath)}:${hit.line}` : "";
   // Truncate the query itself so `prefix` + `counter` alone can never exceed `width`; the
   // trailing `location` then simply gets whatever's left (down to nothing) via `padText`.
-  const queryBudget = Math.max(0, width - textWidth("Search:   ") - textWidth(counter));
-  const prefix = `Search: ${fitText(query, queryBudget, "…")}  `;
+  const queryBudget = Math.max(
+    0,
+    width - textWidth(`Search ${scopeLabel}:   `) - textWidth(counter),
+  );
+  const prefix = `Search ${scopeLabel}: ${fitText(query, queryBudget, "…")}  `;
   const suffix = `  ${location}`;
   const contentWidth = Math.max(0, width - textWidth(prefix) - textWidth(counter));
   return (

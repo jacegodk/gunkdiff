@@ -39,6 +39,17 @@ function backgroundUnder(session: Session, needle: string) {
   return undefined;
 }
 
+/** gunk: `/` opens the hunk-viewed search, so give this bundled search its old key back. */
+function searchKeyTestEnv() {
+  const configHome = harness.createIsolatedConfigHome();
+  mkdirSync(join(configHome, "hunk"), { recursive: true });
+  writeFileSync(
+    join(configHome, "hunk", "config.toml"),
+    '[keybindings]\n"hunk.search.find" = "/"\n',
+  );
+  return { XDG_CONFIG_HOME: configHome };
+}
+
 describe("PTY content search", () => {
   test("/ searches, Enter reveals the match, and n / N step through the review", async () => {
     const fixture = harness.createSearchRepoFixture();
@@ -47,6 +58,7 @@ describe("PTY content search", () => {
       cwd: fixture.dir,
       cols: 120,
       rows: 14,
+      env: searchKeyTestEnv(),
     });
 
     try {
@@ -146,6 +158,7 @@ describe("PTY content search", () => {
       cwd: fixture.dir,
       cols: 120,
       rows: 14,
+      env: searchKeyTestEnv(),
     });
 
     try {
@@ -183,6 +196,7 @@ describe("PTY content search", () => {
       cwd: fixture.dir,
       cols: 120,
       rows: 14,
+      env: searchKeyTestEnv(),
     });
 
     try {

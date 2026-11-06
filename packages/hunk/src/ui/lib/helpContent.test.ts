@@ -126,7 +126,6 @@ describe("buildHelpSections", () => {
   test("documents the bundled search keys beside the built-in navigation rows", () => {
     const sections = helpSections();
 
-    expect(keysFor(sections, "search diff content")).toBe("/");
     expect(keysFor(sections, "next / previous match (notes when no search)")).toBe("n / N");
     // The filter ships unbound, so its row disappears rather than advertising nothing.
     expect(keysFor(sections, "focus file filter")).toBeUndefined();
@@ -136,7 +135,6 @@ describe("buildHelpSections", () => {
     const sections = helpSections({ "hunk.review.focusFilter": "/" });
 
     expect(keysFor(sections, "focus file filter")).toBe("/");
-    expect(keysFor(sections, "search diff content")).toBeUndefined();
     expect(keysFor(sections, "next / previous match (notes when no search)")).toBe("n / N");
   });
 

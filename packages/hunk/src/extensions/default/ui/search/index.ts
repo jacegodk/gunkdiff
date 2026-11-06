@@ -87,7 +87,8 @@ const registerBundledSearch: ExtensionFactory = (hunk) => {
   });
 
   hunk.registerCommand(
-    { id: BUNDLED_SEARCH_FIND_COMMAND_ID, title: "Search diff content", key: "/" },
+    // gunk: unbound; `/` opens the hunk-viewed search, whose Tab switches it to the diff only.
+    { id: BUNDLED_SEARCH_FIND_COMMAND_ID, title: "Search diff content" },
     async (ctx) => {
       // The prompt reopens on the last query so Enter repeats it and Escape clears it first.
       const query = await ctx.prompts.line({

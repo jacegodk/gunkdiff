@@ -82,14 +82,16 @@ const HELP_SECTIONS: readonly HelpSectionSpec[] = [
     title: "Find",
     entries: [
       { commandIds: ["hunk.review.findFile"], description: "find a file by name" },
-      { commandIds: ["hunk.search.find"], description: "search diff content" },
+      {
+        commandIds: ["hunk-viewed.search"],
+        description: "search; tab in the prompt switches all source / diff only",
+      },
+      { commandIds: ["hunk-viewed.searchNext"], description: "next match" },
+      { commandIds: ["hunk-viewed.searchPrevious"], description: "previous match" },
       {
         commandIds: ["hunk.search.next", "hunk.search.previous"],
         description: "next / previous match (notes when no search)",
       },
-      { commandIds: ["hunk-viewed.search"], description: "search every file's whole source" },
-      { commandIds: ["hunk-viewed.searchNext"], description: "next hit of that search" },
-      { commandIds: ["hunk-viewed.searchPrevious"], description: "previous hit of that search" },
       { commandIds: ["hunk.review.focusFilter"], description: "focus file filter" },
       { commandIds: ["hunk.app.toggleFocusArea"], description: "toggle files/filter focus" },
     ],

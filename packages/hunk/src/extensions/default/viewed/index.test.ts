@@ -318,7 +318,7 @@ describe("registration", () => {
     expect(fake.commands.get("clearRepo")?.command.key).toBe("ctrl+alt+shift+v");
     expect(fake.commands.get("foldViewed")?.command.key).toBeUndefined();
     expect(fake.commands.get("singleFile")?.command.key).toBe("o");
-    expect(fake.commands.get("search")?.command.key).toEqual(["ctrl+f", "f3"]);
+    expect(fake.commands.get("search")?.command.key).toEqual(["ctrl+f", "f3", "/"]);
     expect(fake.commands.get("searchNext")?.command.key).toBe("ctrl+n");
     expect(fake.commands.get("searchPrevious")?.command.key).toEqual([
       "ctrl+p",
