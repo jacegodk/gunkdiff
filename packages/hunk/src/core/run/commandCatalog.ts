@@ -483,7 +483,7 @@ const BUILTIN_COMMANDS = [
     id: "hunk.app.openCommitPicker",
     title: "Pick a commit to review",
     category: "app",
-    defaultKeys: ["ctrl+shift+p"],
+    defaultKeys: ["ctrl+alt+p"],
     locus: "host-only",
     publicToExtensions: true,
     closesMenu: true,

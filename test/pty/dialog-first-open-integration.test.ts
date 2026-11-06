@@ -11,8 +11,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const overlays = [
   { name: "help", key: "?", marker: "Controls help" },
   { name: "menu", key: "\x1b[21~", marker: "Toggle files/filter focus" },
-  // Kitty keyboard encoding of ctrl+shift+p; the legacy byte carries no shift bit.
-  { name: "commit picker", key: "\x1b[112;6u", marker: "Pick a commit" },
+  // Legacy encoding of ctrl+alt+p: Escape, then the ctrl+p byte.
+  { name: "commit picker", key: "\x1b\x10", marker: "Pick a commit" },
 ];
 
 /** Create one tracked, changed file without user Git configuration or hooks. */

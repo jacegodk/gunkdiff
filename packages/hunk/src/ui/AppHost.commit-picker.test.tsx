@@ -91,7 +91,7 @@ describe("commit picker", () => {
       expect(frame).not.toContain("Pick a commit");
 
       await act(async () => {
-        setup.mockInput.pressKey("p", { ctrl: true, shift: true });
+        setup.mockInput.pressKey("p", { ctrl: true, meta: true });
       });
       frame = await waitForFrame(setup, (f) => f.includes("Pick a commit"));
       // Newest first, under the row that leaves a commit again.
@@ -116,7 +116,7 @@ describe("commit picker", () => {
 
       // The same chord reopens the same list while one commit is up.
       await act(async () => {
-        setup.mockInput.pressKey("p", { ctrl: true, shift: true });
+        setup.mockInput.pressKey("p", { ctrl: true, meta: true });
       });
       frame = await waitForFrame(setup, (f) => f.includes("Pick a commit"));
       expect(frame).toContain("first subject");
@@ -164,7 +164,7 @@ describe("commit picker", () => {
     try {
       await waitForFrame(setup, (f) => f.includes("+b"));
       await act(async () => {
-        setup.mockInput.pressKey("p", { ctrl: true, shift: true });
+        setup.mockInput.pressKey("p", { ctrl: true, meta: true });
       });
       const frame = await waitForFrame(setup, (f) => f.includes("No commits in"));
       expect(frame).toMatch(/No commits in \S+\.\.HEAD/);
