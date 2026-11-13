@@ -270,6 +270,8 @@ export interface TerminalReview {
   sourceStatusByFileId: Record<string, FileSourceStatus>;
   toggleGap: (fileId: string, gapKey: string) => void;
   toggleSelectedHunkGap: () => void;
+  /** gunk: open every gap of the selected file; a file already shown whole stays so. */
+  showSelectedFileWhole: () => void;
   /** gunk: show (`count` > 0) or hide 10×count unchanged lines on both sides of the selected hunk. */
   revealAroundSelectedHunk: (count: number) => void;
   /** gunk: show `delta` more of one gap's lines, measured from its start (head) or end (tail). */
@@ -1207,6 +1209,16 @@ export function useTerminalReview({
     [fileByKey, lowerCommand, runIntent, startSourceLoad],
   );
 
+  const showSelectedFileWhole = useCallback(() => {
+    const intent = lowerCommand("hunk.review.expandFile");
+    if (intent?.type !== "expansion/set-file") return;
+    const settled = runIntent({ ...intent, expanded: true });
+    for (const source of settled.sources) {
+      const file = fileByKey.get(source.fileKey);
+      if (file?.sourceFetcher) startSourceLoad(file, source.fileKey, source.side);
+    }
+  }, [fileByKey, lowerCommand, runIntent, startSourceLoad]);
+
   /** gunk: grow one gap from one end, for the arrows a collapsed row draws. */
   const revealGapSide = useCallback(
     (fileId: string, gapKey: string, side: "head" | "tail", delta: number) => {
@@ -1907,6 +1919,7 @@ export function useTerminalReview({
     sourceStatusByFileId,
     toggleGap,
     toggleSelectedHunkGap,
+    showSelectedFileWhole,
     revealAroundSelectedHunk,
     revealGapSide,
     toggleWholeFile,

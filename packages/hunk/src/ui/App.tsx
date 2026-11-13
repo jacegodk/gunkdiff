@@ -1049,6 +1049,39 @@ export function App({
     diffScrollRef.current?.scrollBy(delta, unit);
   };
 
+  // gunk: the last file `z` showed whole at the end of the review; the view follows its rows down.
+  const [bottomPinFileId, setBottomPinFileId] = useState<string | null>(null);
+
+  /**
+   * gunk: `z` toggles the context of the selected hunk, but at the end of the review, on the
+   * last file, it shows that file whole and keeps the view at the bottom. There the next gap is
+   * often above the view or absent until the source is read, so a toggle shows nothing.
+   */
+  const toggleGapOrShowLastFileWhole = () => {
+    const scrollBox = diffScrollRef.current;
+    const atEnd =
+      scrollBox !== null &&
+      scrollBox.scrollTop + scrollBox.viewport.height >= scrollBox.scrollHeight - 1;
+    const lastFile = filteredFiles.at(-1);
+    if (!atEnd || !lastFile || selectedFile?.id !== lastFile.id) {
+      review.toggleSelectedHunkGap();
+      return;
+    }
+    review.showSelectedFileWhole();
+    setBottomPinFileId(lastFile.id);
+  };
+
+  // Re-pin on each review change until the file's source has settled, so rows that arrive
+  // after the read still end at the bottom of the view.
+  const bottomPinSourceStatus = bottomPinFileId
+    ? review.sourceStatusByFileId[bottomPinFileId]?.kind
+    : undefined;
+  useEffect(() => {
+    if (!bottomPinFileId) return;
+    setScrollEdgeRequest((current) => ({ id: current.id + 1, edge: "bottom" }));
+    if (bottomPinSourceStatus !== "loading") setBottomPinFileId(null);
+  }, [bottomPinFileId, bottomPinSourceStatus, review.stateRevision]);
+
   /** Ask DiffPane to align the current rendered line using its authoritative row geometry. */
   const alignCurrentLine = useCallback((alignment: CurrentLineAlignment) => {
     setLineCursorAlignmentRequest((current) => ({
@@ -1459,7 +1492,7 @@ export function App({
         toggleUserNotes: review.toggleUserNotes,
         toggleCopyDecorations,
         toggleFocusArea,
-        toggleGapForSelectedHunk: review.toggleSelectedHunkGap,
+        toggleGapForSelectedHunk: toggleGapOrShowLastFileWhole,
         revealAroundSelectedHunk: review.revealAroundSelectedHunk,
         toggleWholeSelectedFile: () => review.toggleWholeFile("file"),
         toggleWholeFiles: () => review.toggleWholeFile("review"),
