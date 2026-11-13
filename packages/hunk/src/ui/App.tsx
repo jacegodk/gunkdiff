@@ -1051,16 +1051,20 @@ export function App({
 
   // gunk: the last file `z` showed whole at the end of the review; the view follows its rows down.
   const [bottomPinFileId, setBottomPinFileId] = useState<string | null>(null);
+  // The view's top as the pin last saw it; a smaller top later means the user scrolled up.
+  const bottomPinTopRef = useRef(0);
 
   /**
    * gunk: `z` toggles the context of the selected hunk, but at the end of the review, on the
    * last file, it shows that file whole and keeps the view at the bottom. There the next gap is
-   * often above the view or absent until the source is read, so a toggle shows nothing.
+   * often above the view or absent until the source is read, so a toggle shows nothing. A review
+   * that fits on one screen never scrolled, and keeps the plain toggle.
    */
   const toggleGapOrShowLastFileWhole = () => {
     const scrollBox = diffScrollRef.current;
     const atEnd =
       scrollBox !== null &&
+      scrollBox.scrollTop > 0 &&
       scrollBox.scrollTop + scrollBox.viewport.height >= scrollBox.scrollHeight - 1;
     const lastFile = filteredFiles.at(-1);
     if (!atEnd || !lastFile || selectedFile?.id !== lastFile.id) {
@@ -1068,19 +1072,27 @@ export function App({
       return;
     }
     review.showSelectedFileWhole();
+    bottomPinTopRef.current = scrollBox.scrollTop;
     setBottomPinFileId(lastFile.id);
   };
 
   // Re-pin on each review change until the file's source has settled, so rows that arrive
-  // after the read still end at the bottom of the view.
+  // after the read still end at the bottom of the view. Selecting another file or scrolling up
+  // meanwhile ends the pin, so a slow read never pulls the view back down.
   const bottomPinSourceStatus = bottomPinFileId
     ? review.sourceStatusByFileId[bottomPinFileId]?.kind
     : undefined;
   useEffect(() => {
     if (!bottomPinFileId) return;
+    const top = diffScrollRef.current?.scrollTop ?? 0;
+    if (selectedFileId !== bottomPinFileId || top < bottomPinTopRef.current) {
+      setBottomPinFileId(null);
+      return;
+    }
+    bottomPinTopRef.current = top;
     setScrollEdgeRequest((current) => ({ id: current.id + 1, edge: "bottom" }));
     if (bottomPinSourceStatus !== "loading") setBottomPinFileId(null);
-  }, [bottomPinFileId, bottomPinSourceStatus, review.stateRevision]);
+  }, [bottomPinFileId, bottomPinSourceStatus, review.stateRevision, selectedFileId]);
 
   /** Ask DiffPane to align the current rendered line using its authoritative row geometry. */
   const alignCurrentLine = useCallback((alignment: CurrentLineAlignment) => {
