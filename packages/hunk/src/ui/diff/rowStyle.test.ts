@@ -37,8 +37,8 @@ describe("cursorLineHighlightBg", () => {
       return contrastRatio(to, from);
     };
 
-    expect(shift(added)).toBeGreaterThan(1.2);
-    expect(shift(context)).toBeGreaterThan(1.2);
+    expect(shift(added)).toBeGreaterThan(1.8);
+    expect(shift(context)).toBeGreaterThan(1.8);
   });
 });
 

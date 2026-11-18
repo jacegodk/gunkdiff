@@ -6,7 +6,8 @@ import type { SplitLineCell, UnifiedLineCell } from "./diffRows";
 const INACTIVE_RAIL_BLEND = 0.35;
 const FILE_BAND_BLEND = 0.35;
 const SELECTION_BG_BLEND = 0.75;
-const CURSOR_LINE_BG_BLEND = 0.2;
+const CURSOR_LINE_BG_MAX_BLEND = 0.45;
+const CURSOR_LINE_BG_MIN_BLEND = 0.2;
 const selectionBackgroundCache = new WeakMap<AppTheme, Map<string, string>>();
 const cursorLineBackgroundCache = new WeakMap<AppTheme, Map<string, string>>();
 
@@ -64,7 +65,12 @@ export function cursorLineHighlightBg(baseBg: string, theme: AppTheme) {
           ? "#000000"
           : "#ffffff"
         : baseBg;
-    return blendHex(theme.text, source, CURSOR_LINE_BG_BLEND);
+    // gunk: lift as far as the code on top stays readable (contrast 3), so the line stands out.
+    for (let blend = CURSOR_LINE_BG_MAX_BLEND; blend > CURSOR_LINE_BG_MIN_BLEND; blend -= 0.05) {
+      const lifted = blendHex(theme.text, source, blend);
+      if (contrastRatio(theme.text, lifted) >= 3) return lifted;
+    }
+    return blendHex(theme.text, source, CURSOR_LINE_BG_MIN_BLEND);
   });
 }
 
